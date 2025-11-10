@@ -12,6 +12,7 @@ import MainLayout from "../layout/MainLayout";
 import { useAuth } from "../auth/useAuth";
 
 import CaregiverHome from "../modules/caregiver/Home";
+import DoctorHome from "../modules/doctor/Home";
 import DoctorGallery from "../modules/doctor/DoctorGallery";
 import PatientHome from "../modules/patient/Home";
 
@@ -53,6 +54,7 @@ export default function AppRouter() {
       <MainLayout />
     </ProtectedRoute>
   }>
+    <Route path="home" element={<DoctorHome />} />
     <Route path="gallery" element={<DoctorGallery />} />
   </Route>
 

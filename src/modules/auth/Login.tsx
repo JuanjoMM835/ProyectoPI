@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import "./login.css"; // Esto ya está bien
@@ -23,7 +23,7 @@ export default function Login() {
           navigate("/patient/home");
           break;
         case "doctor":
-          navigate("/doctor/gallery");
+          navigate("/doctor/home");
           break;
         case "caregiver":
           navigate("/caregiver/home");

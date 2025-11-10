@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/useAuth";
 import { getPatientsForCaregiver, type PatientProfile } from "../../api/familyService";
-//import PatientProfileModal from "../../components/PatientProfileModal";
+import PatientProfileModal from "../../components/PatientProfileModal";
 import "./Family.css";
 
 export default function CaregiverFamily() {

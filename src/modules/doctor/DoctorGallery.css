@@ -1,0 +1,100 @@
+/* ========================================= */
+/* Doctor Gallery Styles                     */
+/* ========================================= */
+.doctor-gallery {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.doctor-gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.doctor-gallery-title {
+  font-size: 28px;
+  color: #1e3a8a;
+  font-weight: 700;
+  margin: 0;
+}
+
+.doctor-gallery-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.back-btn,
+.logout-gallery-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.back-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.logout-gallery-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.logout-gallery-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.memories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 10px;
+}
+
+.no-memories {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+  font-size: 18px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .doctor-gallery-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .doctor-gallery-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .back-btn,
+  .logout-gallery-btn {
+    width: 100%;
+  }
+
+  .memories-grid {
+    grid-template-columns: 1fr;
+  }
+}
