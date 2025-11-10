@@ -4,6 +4,13 @@ import { useAuth } from "../auth/useAuth";
 export default function Navbar() {
   const { user, role, logout } = useAuth();
 
+  const getHomeLink = () => {
+    if (role === "patient") return "/patient/home";
+    if (role === "caregiver") return "/caregiver/home";
+    if (role === "doctor") return "/doctor/home";
+    return "/";
+  };
+
   return (
     <nav
       style={{
@@ -14,11 +21,22 @@ export default function Navbar() {
         color: "#fff",
       }}
     >
-      <Link to="/" style={{ color: "#fff" }}>Inicio</Link>
+      <Link to={getHomeLink()} style={{ color: "#fff" }}>Inicio</Link>
 
       {role === "patient" && (
-        <Link to="/patient/gallery" style={{ color: "#fff" }}>
-          Mis recuerdos
+        <>
+          <Link to="/patient/gallery" style={{ color: "#fff" }}>
+            Mis recuerdos
+          </Link>
+          <Link to="/patient/profile" style={{ color: "#fff" }}>
+            Perfil
+          </Link>
+        </>
+      )}
+
+      {role === "caregiver" && (
+        <Link to="/caregiver/profile" style={{ color: "#fff" }}>
+          Perfil
         </Link>
       )}
 

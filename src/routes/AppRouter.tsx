@@ -1,22 +1,33 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "../modules/auth/Login";
 import Register from "../modules/auth/Register";
-import Profile from "../modules/patient/Profile";
+import PatientProfile from "../modules/patient/Profile";
+import CaregiverProfile from "../modules/caregiver/Profile";
 import Reminders from "../modules/patient/reminders";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
 import MainLayout from "../layout/MainLayout";
+import { useAuth } from "../auth/useAuth";
 
 import CaregiverHome from "../modules/caregiver/Home";
 import DoctorGallery from "../modules/doctor/DoctorGallery";
 import PatientHome from "../modules/patient/Home";
 
+function RoleBasedRedirect() {
+  const { role } = useAuth();
+  
+  if (role === "patient") return <Navigate to="/patient/home" replace />;
+  if (role === "caregiver") return <Navigate to="/caregiver/home" replace />;
+  if (role === "doctor") return <Navigate to="/doctor/home" replace />;
+  
+  return <Navigate to="/login" replace />;
+}
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-  <Route path="/" element={<Navigate to="/patient/home" replace />} />
+  <Route path="/" element={<RoleBasedRedirect />} />
 
   {}
   <Route path="/login" element={<Login />} />
@@ -30,6 +41,8 @@ export default function AppRouter() {
     </ProtectedRoute>
   }>
     <Route path="home" element={<PatientHome />} />
+    <Route path="reminders" element={<Reminders />} />
+    <Route path="profile" element={<PatientProfile />} />
   </Route>
 
   {}
@@ -48,11 +61,10 @@ export default function AppRouter() {
     </ProtectedRoute>
   }>
     <Route path="home" element={<CaregiverHome />} />
+    <Route path="profile" element={<CaregiverProfile />} />
   </Route>
 
   <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
-  <Route path="/patient/reminders" element={<Reminders />} />
-<Route path="/patient/profile" element={<Profile />} />
 
 </Routes>
 

@@ -1,0 +1,135 @@
+/* ========================================= */
+/* 1. Contenedor Principal: .caregiver-home  */
+/* ========================================= */
+.caregiver-home {
+  /* Tamaño y centrado */
+  max-width: 900px; /* Más ancho para la cuadrícula */
+  margin: 60px auto;
+  padding: 40px; /* Más padding interno para "respirar" */
+
+  /* Estilo visual */
+  font-family: "Poppins", sans-serif;
+  background: #ffffff; /* Blanco puro */
+  border-radius: 20px; /* Bordes más redondeados */
+  
+  /* Sombra más profunda y suave (Elevación 2) */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05); 
+  
+  text-align: left; /* Alineación cambiada a izquierda para el contenido de cuidador */
+  transition: transform 0.3s ease; /* Transición sutil al cargar */
+}
+
+/* Opcional: Pequeño efecto al hacer hover sobre el contenedor */
+.caregiver-home:hover {
+    /* transform: translateY(-3px); */
+}
+
+---
+/* ========================================= */
+/* 2. Tipografía: Títulos y Subtítulos (ch-header) */
+/* ========================================= */
+.ch-title {
+  font-size: 36px; /* Más grande para el saludo */
+  color: #1e3a8a; /* Azul oscuro (más profesional) */
+  font-weight: 700; /* Más peso */
+  margin-bottom: 0px;
+}
+
+.ch-sub {
+  font-size: 18px;
+  color: #6b7280; /* Gris medio (más suave) */
+  margin-top: 5px;
+  margin-bottom: 40px; /* Separación de la cuadrícula de opciones */
+  line-height: 1.4;
+}
+
+---
+/* ========================================= */
+/* 3. Cuadrícula de Opciones (ch-grid)      */
+/* ========================================= */
+.ch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 2-3 columnas responsivas */
+  gap: 20px; /* Espacio entre tarjetas */
+  margin-bottom: 40px;
+}
+
+/* 4. Tarjeta de Opción (ch-card) */
+.ch-card {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  
+  /* Color de fondo y borde */
+  background: #f8f9fa; /* Gris claro sutil para las tarjetas */
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  
+  /* Fuente y apariencia */
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  
+  /* Transiciones y sombra */
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.ch-card:hover {
+  background: #e9ecef; /* Un poco más oscuro al hacer hover */
+  border-color: #3b82f6; /* Borde de color primario al hacer hover */
+  transform: translateY(-2px); /* Efecto de "levantamiento" sutil */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ch-card:active {
+  transform: translateY(0);
+}
+
+.ch-icon {
+  font-size: 36px;
+  margin-right: 15px;
+  /* Centrado visual si el icono es más pequeño */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ch-text h2 {
+  font-size: 18px;
+  color: #1e3a8a;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ch-text p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 5px 0 0 0;
+}
+
+/* 5. Tarjeta de Cerrar Sesión (ch-logout) */
+.ch-logout {
+  background: #fef2f2; /* Rojo más claro para diferenciar */
+  border-color: #fee2e2;
+}
+
+.ch-logout:hover {
+  background: #fee2e2;
+  border-color: #ef4444; /* Rojo fuerte para el hover */
+}
+
+.ch-logout .ch-text h2 {
+    color: #b91c1c; /* Color rojo de énfasis */
+}
+
+/* 6. Pie de Página (ch-foot) */
+.ch-foot {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 14px;
+    color: #9ca3af;
+}
