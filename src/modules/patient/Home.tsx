@@ -1,15 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
-
+import "./Home.css";
 
 export default function PatientHome() {
-  const {  user , name , logout } = useAuth();
+  const {  user , logout } = useAuth();
   const navigate = useNavigate();
   
 
   return (
     <div className="patient-home">
-      <h2 className="title">¡Hola, {name || "Paciente"}! 👋</h2>
+      <h2 className="title">¡Hola, {user?.name || "Paciente"}! 👋
+</h2>
 
       <p className="subtitle">¿Qué te gustaría hacer hoy?</p>
 

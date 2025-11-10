@@ -1,7 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "../modules/auth/Login";
 import Register from "../modules/auth/Register";
-
+import Profile from "../modules/patient/Profile";
+import Reminders from "../modules/patient/reminders";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
 import MainLayout from "../layout/MainLayout";
@@ -50,6 +51,9 @@ export default function AppRouter() {
   </Route>
 
   <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
+  <Route path="/patient/reminders" element={<Reminders />} />
+<Route path="/patient/profile" element={<Profile />} />
+
 </Routes>
 
     </BrowserRouter>

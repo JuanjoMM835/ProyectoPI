@@ -1,46 +1,60 @@
 import { useEffect, useState } from "react";
-import { getMemories, type Memory } from "../../api/memoryService";
-import UploadMemory from "../../api/uploadMemory";
+import { getMemories, updateMemoryDescription } from "../../api/memoryService";
 import { useAuth } from "../../auth/useAuth";
-import MemoryCard from "../../components/MemoryCard";
+import type { Memory } from "../../types/Memory";
+import "./Gallery.css";
 
 export default function Gallery() {
-  const { user, role } = useAuth();
+  const { user } = useAuth();
   const [memories, setMemories] = useState<Memory[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const load = async () => {
-    if (!user || !role) return;
-    setLoading(true);
-    try {
-      
-      const data = await getMemories(user.uid, role);
-      setMemories(data);
-    } catch (err) {
-      console.error("Error cargando memorias:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [selected, setSelected] = useState<Memory | null>(null);
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
-    load();
-    
-  }, [user, role]);
+    if (!user) return;
+    getMemories(user.uid, "patient").then(setMemories);
+  }, [user]);
+
+  const saveDescription = async () => {
+    if (!selected) return;
+
+    await updateMemoryDescription(selected.id!, description);
+    setSelected(null);
+    setDescription("");
+    getMemories(user!.uid, "patient").then(setMemories);
+  };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Subir y ver recuerdos</h2>
+    <div className="gallery-container">
+      <h2 className="title">Mis Recuerdos</h2>
 
-      <UploadMemory onUpload={load} />
-
-      {loading ? <p>Cargando...</p> : null}
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+      <div className="grid">
         {memories.map((m) => (
-          <MemoryCard key={m.id} memory={m} />
+          <img
+            key={m.id}
+            src={m.imageUrl}
+            alt="Memory"
+            className="memory-img"
+            onClick={() => setSelected(m)}
+          />
         ))}
       </div>
+
+      {selected && (
+        <div className="modal">
+          <img src={selected.imageUrl} className="modal-img" />
+
+          <textarea
+            className="description-input"
+            placeholder="Describe este recuerdo..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+
+          <button onClick={saveDescription} className="btn">Guardar</button>
+          <button onClick={() => setSelected(null)} className="btn cancel">Cerrar</button>
+        </div>
+      )}
     </div>
   );
 }

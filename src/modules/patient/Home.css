@@ -1,0 +1,93 @@
+/* ========================================= */
+/* 1. Contenedor Principal: .patient-home    */
+/* ========================================= */
+.patient-home {
+  /* Tamaño y centrado */
+  max-width: 580px; /* Un poco más ancho */
+  margin: 60px auto;
+  padding: 40px; /* Más padding interno para "respirar" */
+
+  /* Estilo visual */
+  font-family: "Poppins", sans-serif;
+  background: #ffffff; /* Blanco puro */
+  border-radius: 20px; /* Bordes más redondeados */
+  
+  /* Sombra más profunda y suave (Elevación 2) */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05); 
+  
+  text-align: center;
+  transition: transform 0.3s ease; /* Transición sutil al cargar */
+}
+
+/* Opcional: Pequeño efecto al hacer hover sobre el contenedor */
+.patient-home:hover {
+    /* transform: translateY(-3px); */
+}
+
+---
+/* ========================================= */
+/* 2. Tipografía: Títulos y Subtítulos      */
+/* ========================================= */
+.title {
+  font-size: 32px; /* Un poco más grande para impacto */
+  color: #1e3a8a; /* Azul oscuro (más profesional) */
+  font-weight: 700; /* Más peso */
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #6b7280; /* Gris medio (más suave) */
+  margin-top: 5px;
+  margin-bottom: 30px; /* Separación del bloque de opciones */
+  line-height: 1.4;
+}
+
+---
+/* ========================================= */
+/* 3. Opciones y Botones                    */
+/* ========================================= */
+.options {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* Un poco más de espacio entre botones */
+}
+
+.btn {
+  /* Nuevo color primario más vibrante, pero profesional */
+  background: #3b82f6; 
+  color: white;
+  padding: 16px; /* Más acolchado */
+  border: none;
+  border-radius: 12px; /* Bordes ligeramente menos redondeados que el contenedor */
+  font-size: 17px;
+  font-weight: 600;
+  text-transform: uppercase; /* Darle un toque moderno */
+  letter-spacing: 0.5px;
+  
+  /* Transiciones suaves */
+  transition: background 0.3s ease, transform 0.1s ease; 
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #2563eb; /* Un azul ligeramente más oscuro */
+  transform: translateY(-1px); /* Efecto de "levantamiento" sutil */
+}
+
+.btn:active {
+  transform: translateY(0); /* Efecto de "presión" */
+}
+
+/* Botón de Cerrar Sesión (logout-btn) */
+.logout-btn {
+  margin-top: 35px;
+  background: #ef4444; /* Rojo más moderno */
+  opacity: 0.85; /* Un poco de transparencia para diferenciarlo */
+}
+
+.logout-btn:hover {
+  background: #dc2626; 
+  opacity: 1;
+}

@@ -1,10 +1,12 @@
 import {
   addDoc,
   collection,
+  doc,
   getDocs,
   orderBy,
   query,
   Timestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import {
@@ -14,7 +16,6 @@ import {
 } from "firebase/storage";
 import { db, storage } from "../firebase/firebase";
 import type { Role } from "./authService";
-
 export interface Memory {
   id?: string;
   userId: string;
@@ -68,4 +69,10 @@ export async function getMemories(userId: string, role: Role) {
     id: doc.id,
     ...doc.data(),
   })) as Memory[];
+}
+export async function updateMemoryDescription(id: string, description: string) {
+  await updateDoc(doc(db, "memories", id), {
+    description,
+    updatedAt: new Date(),
+  });
 }

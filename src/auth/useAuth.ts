@@ -1,4 +1,3 @@
-import type { User } from "firebase/auth";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useContext } from "react";
@@ -10,14 +9,12 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth debe usarse dentro de AuthProvider");
 
-  const { user, role, loading } = ctx;
+  const { user, role, name, photoURL, loading, setUser } = ctx;
 
-  
   const login = async (email: string, password: string) => {
     const res = await signInWithEmailAndPassword(auth, email, password);
-    const firebaseUser = res.user as User;
+    const firebaseUser = res.user;
     const userRef = doc(db, "users", firebaseUser.uid);
-
     const snap = await getDoc(userRef);
 
     if (!snap.exists()) {
@@ -30,7 +27,6 @@ export function useAuth() {
     return { user: firebaseUser, role };
   };
 
-  
   const register = async (email: string, password: string, name: string, role: Role) => {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const firebaseUser = res.user;
@@ -39,8 +35,6 @@ export function useAuth() {
       name,
       email,
       role,
-      patientIds: [],
-      doctorId: null,
       createdAt: new Date(),
       estado: "activo",
     });
@@ -50,5 +44,5 @@ export function useAuth() {
 
   const logout = () => signOut(auth);
 
-  return { user, role, loading, login, register, logout };
+  return { user, role, name, photoURL, loading, setUser, login, register, logout };
 }
