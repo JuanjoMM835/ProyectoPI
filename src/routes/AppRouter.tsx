@@ -1,20 +1,26 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "../modules/auth/Login";
 import Register from "../modules/auth/Register";
-import PatientProfile from "../modules/patient/Profile";
-import CaregiverProfile from "../modules/caregiver/Profile";
-import CaregiverMemoryManagement from "../modules/caregiver/MemoryManagement";
-import CaregiverFamily from "../modules/caregiver/Family";
-import Reminders from "../modules/patient/reminders";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
 import MainLayout from "../layout/MainLayout";
 import { useAuth } from "../auth/useAuth";
 
+// Paciente
+import PatientHome from "../modules/patient/Home";
+import PatientProfile from "../modules/patient/Profile";
+import Reminders from "../modules/patient/reminders";
+import Test from "../modules/patient/Test";
+
+// Cuidador
 import CaregiverHome from "../modules/caregiver/Home";
+import CaregiverProfile from "../modules/caregiver/Profile";
+import CaregiverMemoryManagement from "../modules/caregiver/MemoryManagement";
+import CaregiverFamily from "../modules/caregiver/Family";
+
+// Médico
 import DoctorHome from "../modules/doctor/Home";
 import DoctorGallery from "../modules/doctor/DoctorGallery";
-import PatientHome from "../modules/patient/Home";
 
 function RoleBasedRedirect() {
   const { role } = useAuth();
@@ -30,50 +36,51 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-  <Route path="/" element={<RoleBasedRedirect />} />
+        {/* Redirección inicial */}
+        <Route path="/" element={<RoleBasedRedirect />} />
 
-  {}
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
- 
+        {/* Públicos */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-  {}
-  <Route path="/patient/*" element={
-    <ProtectedRoute role="patient">
-      <MainLayout />
-    </ProtectedRoute>
-  }>
-    <Route path="home" element={<PatientHome />} />
-    <Route path="reminders" element={<Reminders />} />
-    <Route path="profile" element={<PatientProfile />} />
-  </Route>
+        {/* Rutas Paciente */}
+        <Route path="/patient/*" element={
+          <ProtectedRoute role="patient">
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="home" element={<PatientHome />} />
+          <Route path="profile" element={<PatientProfile />} />
+          <Route path="reminders" element={<Reminders />} />
+          <Route path="test" element={<Test />} />
+        </Route>
 
-  {}
-  <Route path="/doctor/*" element={
-    <ProtectedRoute role="doctor">
-      <MainLayout />
-    </ProtectedRoute>
-  }>
-    <Route path="home" element={<DoctorHome />} />
-    <Route path="gallery" element={<DoctorGallery />} />
-  </Route>
+        {/* Rutas Médico */}
+        <Route path="/doctor/*" element={
+          <ProtectedRoute role="doctor">
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="home" element={<DoctorHome />} />
+          <Route path="gallery" element={<DoctorGallery />} />
+        </Route>
 
-  {}
-  <Route path="/caregiver/*" element={
-    <ProtectedRoute role="caregiver">
-      <MainLayout />
-    </ProtectedRoute>
-  }>
-    <Route path="home" element={<CaregiverHome />} />
-    <Route path="profile" element={<CaregiverProfile />} />
-    <Route path="gallery" element={<CaregiverMemoryManagement />} />
-    <Route path="family" element={<CaregiverFamily />} />
-  </Route>
+        {/* Rutas Cuidador */}
+        <Route path="/caregiver/*" element={
+          <ProtectedRoute role="caregiver">
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="home" element={<CaregiverHome />} />
+          <Route path="profile" element={<CaregiverProfile />} />
+          <Route path="gallery" element={<CaregiverMemoryManagement />} />
+          <Route path="family" element={<CaregiverFamily />} />
+        </Route>
 
-  <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
+        {/* Not Found */}
+        <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
 
-</Routes>
-
+      </Routes>
     </BrowserRouter>
   );
 }
