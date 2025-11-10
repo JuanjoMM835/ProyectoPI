@@ -3,6 +3,8 @@ import Login from "../modules/auth/Login";
 import Register from "../modules/auth/Register";
 import PatientProfile from "../modules/patient/Profile";
 import CaregiverProfile from "../modules/caregiver/Profile";
+import CaregiverMemoryManagement from "../modules/caregiver/MemoryManagement";
+import CaregiverFamily from "../modules/caregiver/Family";
 import Reminders from "../modules/patient/reminders";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
@@ -62,6 +64,8 @@ export default function AppRouter() {
   }>
     <Route path="home" element={<CaregiverHome />} />
     <Route path="profile" element={<CaregiverProfile />} />
+    <Route path="gallery" element={<CaregiverMemoryManagement />} />
+    <Route path="family" element={<CaregiverFamily />} />
   </Route>
 
   <Route path="*" element={<h2>404 - Página no encontrada</h2>} />

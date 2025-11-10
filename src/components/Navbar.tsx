@@ -11,6 +11,23 @@ export default function Navbar() {
     return "/";
   };
 
+  // Para cuidadores, solo mostrar el botón de Inicio
+  if (role === "caregiver") {
+    return (
+      <nav
+        style={{
+          display: "flex",
+          gap: "20px",
+          padding: "10px",
+          background: "#222",
+          color: "#fff",
+        }}
+      >
+        <Link to={getHomeLink()} style={{ color: "#fff" }}>Inicio</Link>
+      </nav>
+    );
+  }
+
   return (
     <nav
       style={{
@@ -32,12 +49,6 @@ export default function Navbar() {
             Perfil
           </Link>
         </>
-      )}
-
-      {role === "caregiver" && (
-        <Link to="/caregiver/profile" style={{ color: "#fff" }}>
-          Perfil
-        </Link>
       )}
 
       {role === "doctor" && (

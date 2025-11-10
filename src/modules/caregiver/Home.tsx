@@ -25,7 +25,7 @@ export default function CaregiverHome() {
         >
           <div className="ch-icon">🖼️</div>
           <div className="ch-text">
-            <h2>Ver Fotos</h2>
+            <h2>Subir Fotos</h2>
             <p>Galería de imágenes de pacientes y actividades</p>
           </div>
         </button>
