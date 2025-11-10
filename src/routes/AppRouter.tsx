@@ -1,61 +1,68 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "../modules/auth/Login";
 import Register from "../modules/auth/Register";
-import Profile from "../modules/patient/Profile";
-import Reminders from "../modules/patient/reminders";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
 import MainLayout from "../layout/MainLayout";
 
-import CaregiverHome from "../modules/caregiver/Home";
-import DoctorGallery from "../modules/doctor/DoctorGallery";
+// Paciente
 import PatientHome from "../modules/patient/Home";
+import Profile from "../modules/patient/Profile";
+import Reminders from "../modules/patient/reminders";
+import Test from "../modules/patient/Test";
 
+// Cuidador
+import CaregiverHome from "../modules/caregiver/Home";
+
+// Médico
+import DoctorGallery from "../modules/doctor/DoctorGallery";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-  <Route path="/" element={<Navigate to="/patient/home" replace />} />
 
-  {}
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
- 
+        {/* Redirección inicial */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
-  {}
-  <Route path="/patient/*" element={
-    <ProtectedRoute role="patient">
-      <MainLayout />
-    </ProtectedRoute>
-  }>
-    <Route path="home" element={<PatientHome />} />
-  </Route>
+        {/* Públicos */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-  {}
-  <Route path="/doctor/*" element={
-    <ProtectedRoute role="doctor">
-      <MainLayout />
-    </ProtectedRoute>
-  }>
-    <Route path="gallery" element={<DoctorGallery />} />
-  </Route>
+        {/* Rutas Paciente */}
+        <Route path="/patient/*" element={
+          <ProtectedRoute role="patient">
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="home" element={<PatientHome />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="reminders" element={<Reminders />} />
+          <Route path="test" element={<Test />} />
+        </Route>
 
-  {}
-  <Route path="/caregiver/*" element={
-    <ProtectedRoute role="caregiver">
-      <MainLayout />
-    </ProtectedRoute>
-  }>
-    <Route path="home" element={<CaregiverHome />} />
-  </Route>
+        {/* Rutas Médico */}
+        <Route path="/doctor/*" element={
+          <ProtectedRoute role="doctor">
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="gallery" element={<DoctorGallery />} />
+        </Route>
 
-  <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
-  <Route path="/patient/reminders" element={<Reminders />} />
-<Route path="/patient/profile" element={<Profile />} />
+        {/* Rutas Cuidador */}
+        <Route path="/caregiver/*" element={
+          <ProtectedRoute role="caregiver">
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="home" element={<CaregiverHome />} />
+        </Route>
 
-</Routes>
+        {/* Not Found */}
+        <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
 
+      </Routes>
     </BrowserRouter>
   );
 }
