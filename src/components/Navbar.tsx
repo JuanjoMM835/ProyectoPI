@@ -14,7 +14,23 @@ export default function Navbar() {
         color: "#fff",
       }}
     >
-      <Link to="/" style={{ color: "#fff" }}>Inicio</Link>
+      {role === "patient" && (
+        <Link to="/patient/home" style={{ color: "#fff" }}>
+          Inicio
+        </Link>
+      )}
+
+      {role === "doctor" && (
+        <Link to="/doctor/home" style={{ color: "#fff" }}>
+          Inicio
+        </Link>
+      )}
+
+      {role === "caregiver" && (
+        <Link to="/caregiver/home" style={{ color: "#fff" }}>
+          Inicio
+        </Link>
+      )}
 
       {role === "patient" && (
         <Link to="/patient/gallery" style={{ color: "#fff" }}>

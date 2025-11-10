@@ -1,0 +1,109 @@
+/* ========================================= */
+/* 1. Contenedor Principal: .doctor-home    */
+/* ========================================= */
+.doctor-home {
+  /* Tamaño y centrado */
+  max-width: 580px;
+  margin: 60px auto;
+  padding: 40px;
+
+  /* Estilo visual */
+  font-family: "Poppins", sans-serif;
+  background: #ffffff;
+  border-radius: 20px;
+  
+  /* Sombra más profunda y suave (Elevación 2) */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05); 
+  
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+/* ========================================= */
+/* 2. Tipografía: Títulos y Subtítulos      */
+/* ========================================= */
+.doctor-home .title {
+  font-size: 32px;
+  color: #1e3a8a; /* Azul oscuro profesional */
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.doctor-home .subtitle {
+  font-size: 18px;
+  color: #6b7280; /* Gris medio */
+  margin-top: 5px;
+  margin-bottom: 30px;
+  line-height: 1.4;
+}
+
+/* ========================================= */
+/* 3. Opciones y Botones                    */
+/* ========================================= */
+.doctor-home .options {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.doctor-home .btn {
+  /* Color primario para doctor - azul médico */
+  background: #3b82f6; 
+  color: white;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  /* Transiciones suaves */
+  transition: background 0.3s ease, transform 0.1s ease; 
+  cursor: pointer;
+}
+
+.doctor-home .btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.doctor-home .btn:active {
+  transform: translateY(0);
+}
+
+/* Botón de Cerrar Sesión (logout-btn) */
+.doctor-home .logout-btn {
+  margin-top: 35px;
+  background: #ef4444; /* Rojo moderno */
+  opacity: 0.85;
+}
+
+.doctor-home .logout-btn:hover {
+  background: #dc2626; 
+  opacity: 1;
+}
+
+/* ========================================= */
+/* 4. Responsive Design                     */
+/* ========================================= */
+@media (max-width: 640px) {
+  .doctor-home {
+    margin: 30px 20px;
+    padding: 30px 20px;
+  }
+
+  .doctor-home .title {
+    font-size: 26px;
+  }
+
+  .doctor-home .subtitle {
+    font-size: 16px;
+  }
+
+  .doctor-home .btn {
+    font-size: 15px;
+    padding: 14px;
+  }
+}
