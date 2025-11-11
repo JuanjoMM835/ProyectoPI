@@ -90,6 +90,20 @@ export default function DoctorPatients() {
                 >
                   👁️ Ver Perfil
                 </button>
+                <button 
+                  className="view-tests-btn"
+                  onClick={() => navigate(`/doctor/patient-tests/${patient.uid}`)}
+                >
+                  📊 Ver Tests
+                </button>
+                <button 
+                  className="generate-test-btn"
+                  onClick={() => navigate(`/doctor/generate-test/${patient.uid}`, {
+                    state: { patientName: patient.name }
+                  })}
+                >
+                  🤖 Generar Test
+                </button>
               </div>
             </div>
           ))}

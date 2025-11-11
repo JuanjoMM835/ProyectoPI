@@ -211,7 +211,8 @@
 }
 
 .view-memories-btn,
-.view-profile-btn {
+.view-profile-btn,
+.view-tests-btn {
   padding: 12px;
   border: none;
   border-radius: 8px;
@@ -240,6 +241,27 @@
 .view-profile-btn:hover {
   background: #e5e7eb;
   transform: translateY(-1px);
+}
+
+.view-tests-btn {
+  background: linear-gradient(135deg, #0891b2, #0e7490);
+  color: white;
+}
+
+.view-tests-btn:hover {
+  background: linear-gradient(135deg, #0e7490, #155e75);
+  transform: translateY(-1px);
+}
+
+.generate-test-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.generate-test-btn:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 /* ========================================= */

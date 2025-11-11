@@ -1,0 +1,172 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Usuarios: cada uno solo accede al suyo
+    match /users/{userId} {
+      // Permitir lectura y escritura si eres el propio usuario
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // ✨ Permitir que los doctores lean datos de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([userId]);
+      
+      // ✨ Permitir que los cuidadores lean datos de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([userId]);
+    }
+
+    // Recordatorios: escritura mira request.resource, lectura mira resource
+    match /reminders/{reminderId} {
+      allow create: if request.auth != null 
+          && request.auth.uid == request.resource.data.userId;
+
+      allow read, update, delete: if request.auth != null
+          && request.auth.uid == resource.data.userId;
+      
+      // ✨ Permitir que doctores y cuidadores lean recordatorios de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+                       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' ||
+                       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver'
+                     );
+    }
+
+    // Memorias: actualizado para permitir que cuidadores creen memorias para sus pacientes
+    match /memories/{memoryId} {
+      // Paciente puede crear sus propias memorias
+      allow create: if request.auth != null 
+          && request.auth.uid == request.resource.data.userId;
+
+      // ✨ Cuidador puede crear memorias para sus pacientes
+      allow create: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([request.resource.data.userId]);
+
+      // ✨ Doctor puede crear memorias para sus pacientes
+      allow create: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([request.resource.data.userId]);
+
+      // Lectura/actualización/borrado: propietario
+      allow read, update, delete: if request.auth != null
+          && request.auth.uid == resource.data.userId;
+      
+      // ✨ Permitir que doctores y cuidadores lean/editen/borren memorias de sus pacientes
+      allow read, update, delete: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+                       (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.userId])) ||
+                       (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.userId]))
+                     );
+      
+      // ✨ AGREGADO: Permitir leer/editar/borrar por caregiverId o doctorId (para la galería del cuidador)
+      allow read, update, delete: if request.auth != null && (
+        (resource.data.caregiverId != null && resource.data.caregiverId == request.auth.uid) ||
+        (resource.data.doctorId != null && resource.data.doctorId == request.auth.uid)
+      );
+    }
+    
+    // ✨ Actividades: Permitir que doctores y cuidadores lean actividades de sus pacientes
+    match /activities/{activityId} {
+      // El paciente puede leer/escribir sus propias actividades
+      allow read, write: if request.auth != null && 
+                             request.auth.uid == resource.data.patientId;
+      
+      // Doctores pueden leer actividades de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]);
+      
+      // Cuidadores pueden leer actividades de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]);
+    }
+    
+    // ✨✨✨ NUEVO: Tests Cognitivos con IA
+    match /tests/{testId} {
+      // Doctores y cuidadores pueden crear tests para sus pacientes
+      allow create: if request.auth != null && 
+                       exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+                         (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([request.resource.data.patientId])) ||
+                         (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([request.resource.data.patientId]))
+                       );
+      
+      // Paciente puede leer sus propios tests
+      allow read: if request.auth != null && 
+                     resource.data.patientId == request.auth.uid;
+      
+      // Doctores pueden leer tests de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]);
+      
+      // Cuidadores pueden leer tests de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]);
+      
+      // Paciente puede actualizar (solo para completar el test)
+      allow update: if request.auth != null && 
+                       resource.data.patientId == request.auth.uid &&
+                       request.resource.data.status == 'completed' &&
+                       resource.data.status == 'pending';
+      
+      // Doctores y cuidadores pueden actualizar/eliminar tests de sus pacientes
+      allow update, delete: if request.auth != null && 
+                               exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+                                 (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                                  get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId])) ||
+                                 (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                                  get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]))
+                               );
+    }
+    
+    // ✨✨✨ NUEVO: Resultados de Tests (testResults)
+    match /testResults/{resultId} {
+      // Paciente puede crear sus propios resultados (cuando completa un test)
+      allow create: if request.auth != null && 
+                       request.resource.data.patientId == request.auth.uid;
+      
+      // Paciente puede leer sus propios resultados
+      allow read: if request.auth != null && 
+                     resource.data.patientId == request.auth.uid;
+      
+      // Doctores pueden leer resultados de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]);
+      
+      // Cuidadores pueden leer resultados de sus pacientes
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]);
+      
+      // Doctores y cuidadores pueden actualizar/eliminar resultados
+      allow update, delete: if request.auth != null && 
+                               exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+                                 (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
+                                  get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId])) ||
+                                 (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                                  get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]))
+                               );
+    }
+  }
+}

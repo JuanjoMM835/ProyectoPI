@@ -1,0 +1,37 @@
+/* Importa los estilos base del cuidador */
+@import url('../caregiver/GenerateTest.css');
+
+/* Sobrescribir colores para tema médico */
+.doctor-badge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.generate-test-card .doctor-badge + h2 {
+  margin-top: 8px;
+}
+
+.info-box.doctor-info {
+  background: #d1fae5;
+  border-left-color: #10b981;
+}
+
+.generate-btn.doctor-generate {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.generate-btn.doctor-generate:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.success-message .success-icon {
+  color: #10b981;
+}

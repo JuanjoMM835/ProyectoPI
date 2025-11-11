@@ -11,16 +11,21 @@ import PatientHome from "../modules/patient/Home";
 import PatientProfile from "../modules/patient/Profile";
 import Reminders from "../modules/patient/reminders";
 import Test from "../modules/patient/Test";
+import TakeTest from "../modules/patient/TakeTest";
 
 // Cuidador
 import CaregiverHome from "../modules/caregiver/Home";
 import CaregiverProfile from "../modules/caregiver/Profile";
 import CaregiverMemoryManagement from "../modules/caregiver/MemoryManagement";
 import CaregiverFamily from "../modules/caregiver/Family";
+import GenerateTest from "../modules/caregiver/GenerateTest";
 
 // Médico
 import DoctorHome from "../modules/doctor/Home";
 import DoctorPatients from "../modules/doctor/DoctorPatients";
+import DoctorGenerateTest from "../modules/doctor/GenerateTest";
+import DoctorPatientTests from "../modules/doctor/PatientTests";
+import DoctorTestDetails from "../modules/doctor/TestDetails";
 
 function RoleBasedRedirect() {
   const { role } = useAuth();
@@ -53,6 +58,7 @@ export default function AppRouter() {
           <Route path="profile" element={<PatientProfile />} />
           <Route path="reminders" element={<Reminders />} />
           <Route path="test" element={<Test />} />
+          <Route path="test/:testId" element={<TakeTest />} />
         </Route>
 
         {/* Rutas Médico */}
@@ -63,6 +69,9 @@ export default function AppRouter() {
         }>
           <Route path="home" element={<DoctorHome />} />
           <Route path="patients" element={<DoctorPatients />} />
+          <Route path="generate-test/:patientId" element={<DoctorGenerateTest />} />
+          <Route path="patient-tests/:patientId" element={<DoctorPatientTests />} />
+          <Route path="test-details/:testId" element={<DoctorTestDetails />} />
         </Route>
 
         {/* Rutas Cuidador */}
@@ -75,6 +84,7 @@ export default function AppRouter() {
           <Route path="profile" element={<CaregiverProfile />} />
           <Route path="gallery" element={<CaregiverMemoryManagement />} />
           <Route path="family" element={<CaregiverFamily />} />
+          <Route path="generate-test/:patientId" element={<GenerateTest />} />
         </Route>
 
         {/* Not Found */}

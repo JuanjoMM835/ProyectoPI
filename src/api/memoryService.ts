@@ -79,11 +79,15 @@ export async function uploadMemory(
 export async function getMemories(userId: string, role: Role) {
   let q;
 
-  if (role === "doctor") {
-    //  Doctor puede ver todas las memorias
-    q = query(collection(db, "memories"), orderBy("createdAt", "desc"));
+  if (role === "doctor" || role === "caregiver") {
+    // Doctor y Cuidador pueden ver memorias del paciente especificado
+    q = query(
+      collection(db, "memories"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
   } else {
-    //  Paciente solo ve sus recuerdos
+    // Paciente solo ve sus propios recuerdos
     q = query(
       collection(db, "memories"),
       where("userId", "==", userId),
