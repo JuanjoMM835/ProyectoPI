@@ -33,35 +33,64 @@ export interface Activity {
  */
 export async function getPatientsForCaregiver(caregiverId: string): Promise<PatientProfile[]> {
   try {
-    // Buscar pacientes donde el caregiverId coincida
-    const patientsQuery = query(
-      collection(db, "users"),
-      where("role", "==", "patient"),
-      where("caregiverId", "==", caregiverId)
-    );
-
-    const snapshot = await getDocs(patientsQuery);
-    const patients: PatientProfile[] = [];
-
-    for (const docSnap of snapshot.docs) {
-      const data = docSnap.data();
-      const patient: PatientProfile = {
-        uid: docSnap.id,
-        name: data.name || "Sin nombre",
-        email: data.email || "",
-        photoURL: data.photoURL || null,
-        alzheimerLevel: data.alzheimerLevel || "No especificado",
-        doctorId: data.doctorId,
-        doctorName: data.doctorName || "No asignado",
-        caregiverId: data.caregiverId,
-      };
-
-      patients.push(patient);
+    console.log("🔍 Buscando pacientes para caregiverId:", caregiverId);
+    
+    // Primero, obtener el documento del cuidador para ver sus patientIds
+    const caregiverDoc = await getDoc(doc(db, "users", caregiverId));
+    
+    if (!caregiverDoc.exists()) {
+      console.log("❌ Cuidador no encontrado");
+      return [];
     }
 
+    const caregiverData = caregiverDoc.data();
+    const patientIds = caregiverData.patientIds || [];
+    
+    console.log("📋 Patient IDs encontrados:", patientIds);
+
+    if (patientIds.length === 0) {
+      console.log("⚠️ No hay pacientes asignados a este cuidador");
+      return [];
+    }
+
+    // Obtener los detalles de cada paciente
+    const patients: PatientProfile[] = [];
+
+    for (const patientId of patientIds) {
+      try {
+        const patientDoc = await getDoc(doc(db, "users", patientId));
+        
+        if (patientDoc.exists()) {
+          const data = patientDoc.data();
+          console.log("� Paciente encontrado:", {
+            id: patientDoc.id,
+            name: data.name
+          });
+          
+          const patient: PatientProfile = {
+            uid: patientDoc.id,
+            name: data.name || "Sin nombre",
+            email: data.email || "",
+            photoURL: data.photoURL || null,
+            alzheimerLevel: data.alzheimerLevel || "No especificado",
+            doctorId: data.doctorId,
+            doctorName: data.doctorName || "No asignado",
+            caregiverId: caregiverId,
+          };
+
+          patients.push(patient);
+        } else {
+          console.log("⚠️ Paciente no encontrado:", patientId);
+        }
+      } catch (err) {
+        console.error("❌ Error al obtener paciente:", patientId, err);
+      }
+    }
+
+    console.log("✅ Total pacientes cargados:", patients.length);
     return patients;
   } catch (error) {
-    console.error("Error al obtener pacientes:", error);
+    console.error("❌ Error al obtener pacientes:", error);
     return [];
   }
 }

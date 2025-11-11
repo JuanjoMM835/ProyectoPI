@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { uploadMemory } from "../../api/memoryService";
 import { useAuth } from "../../auth/useAuth";
+import { getPatientsForCaregiver, type PatientProfile } from "../../api/familyService";
 import "./UploadMemory.css";
 
 type Props = {
@@ -14,6 +15,27 @@ export default function CaregiverUploadMemory({ onUpload }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [patients, setPatients] = useState<PatientProfile[]>([]);
+  const [selectedPatientId, setSelectedPatientId] = useState<string>("");
+
+  useEffect(() => {
+    if (user) {
+      loadPatients();
+    }
+  }, [user]);
+
+  async function loadPatients() {
+    if (!user) return;
+    try {
+      const data = await getPatientsForCaregiver(user.uid);
+      setPatients(data);
+      if (data.length > 0) {
+        setSelectedPatientId(data[0].uid); // Seleccionar el primer paciente por defecto
+      }
+    } catch (err) {
+      console.error("Error al cargar pacientes:", err);
+    }
+  }
 
   function handleSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     const selected = e.target.files?.[0] ?? null;
@@ -36,6 +58,11 @@ export default function CaregiverUploadMemory({ onUpload }: Props) {
       return;
     }
 
+    if (!selectedPatientId) {
+      setMessage("❌ Selecciona un paciente");
+      return;
+    }
+
     if (!user) {
       setMessage("❌ Debes estar logueado");
       return;
@@ -45,7 +72,10 @@ export default function CaregiverUploadMemory({ onUpload }: Props) {
     setMessage("");
 
     try {
-      await uploadMemory(file, user.uid, description, "caregiver");
+      // Guardar con el userId del PACIENTE, no del cuidador
+      // El 4to parámetro es "caregiver" (takenBy)
+      // El 5to parámetro es el ID del cuidador (uploadedById)
+      await uploadMemory(file, selectedPatientId, description, "caregiver", user.uid);
       setFile(null);
       setDescription("");
       setPreview(null);
@@ -65,6 +95,29 @@ export default function CaregiverUploadMemory({ onUpload }: Props) {
       <p className="upload-subtitle">Las fotos se usarán para el test del paciente</p>
       
       <form onSubmit={handleSubmit} className="upload-form">
+        {/* Selector de paciente */}
+        <div className="form-group">
+          <label className="form-label">
+            Seleccionar Paciente <span className="required">*</span>
+          </label>
+          <select
+            value={selectedPatientId}
+            onChange={(e) => setSelectedPatientId(e.target.value)}
+            className="patient-select"
+            disabled={patients.length === 0}
+          >
+            {patients.length === 0 ? (
+              <option value="">No hay pacientes asignados</option>
+            ) : (
+              patients.map((patient) => (
+                <option key={patient.uid} value={patient.uid}>
+                  {patient.name}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
+
         <label className="image-upload-area">
           <input
             type="file"

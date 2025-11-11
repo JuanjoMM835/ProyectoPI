@@ -118,6 +118,29 @@
   margin-left: 4px;
 }
 
+.patient-select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.patient-select:focus {
+  border-color: #3b76c4;
+  background: white;
+}
+
+.patient-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .description-textarea {
   width: 100%;
   padding: 12px;

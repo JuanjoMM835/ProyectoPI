@@ -23,6 +23,10 @@ export default function PatientHome() {
           ⏰ Recordatorios
         </button>
 
+        <button onClick={() => navigate("/patient/test")} className="btn">
+          🖼 Test cognitivo
+        </button>
+
         <button onClick={() => navigate("/patient/profile")} className="btn">
           👤 Mi Perfil
         </button>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/useAuth";
-import { getMemories, deleteMemory, updateMemory } from "../../api/memoryService";
+import { deleteMemory, updateMemory, getMemoriesByCaregiver } from "../../api/memoryService";
 import type { Memory } from "../../api/memoryService";
 import "./Gallery.css";
 
@@ -15,19 +15,33 @@ export default function CaregiverGallery() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (user) loadMemories();
+    if (user) {
+      loadPatientsAndMemories();
+    }
   }, [user]);
 
-  async function loadMemories() {
+  async function loadPatientsAndMemories() {
     if (!user) return;
     setLoading(true);
     try {
-      const data = await getMemories(user.uid, "caregiver");
-      setMemories(data);
-    } catch (err) {
-      console.error(err);
+      console.log("🔍 Cargando fotos del cuidador:", user.uid);
+      // Obtener solo las memorias subidas por este cuidador
+      const caregiverMemories = await getMemoriesByCaregiver(user.uid);
+      console.log("📸 Fotos encontradas:", caregiverMemories.length);
+      console.log("📸 Datos de las fotos:", caregiverMemories);
+      
+      setMemories(caregiverMemories);
+    } catch (err: any) {
+      console.error("❌ Error al cargar fotos:", err);
+      console.error("❌ Código de error:", err.code);
+      console.error("❌ Mensaje:", err.message);
+      alert("Error al cargar las fotos. Verifica las reglas de Firestore.");
     }
     setLoading(false);
+  }
+
+  async function loadMemories() {
+    await loadPatientsAndMemories();
   }
 
   async function handleDelete(memory: Memory) {
