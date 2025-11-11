@@ -11,6 +11,7 @@ export interface CustomUser {
   email: string;
   role: Role;
   photoURL: string | null;
+  patientIds?: string[];
 }
 
 export interface AuthState {
@@ -75,6 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             email: data.email,
             role: data.role,
             photoURL: data.photoURL || null,
+            patientIds: data.patientIds || [],
           };
 
           setUser(customUser);

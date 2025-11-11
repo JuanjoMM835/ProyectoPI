@@ -9,7 +9,7 @@ import MainLayout from "../layout/MainLayout";
 
 import CaregiverHome from "../modules/caregiver/Home";
 import DoctorHome from "../modules/doctor/Home";
-import DoctorGallery from "../modules/doctor/DoctorGallery";
+import DoctorPatients from "../modules/doctor/DoctorPatients";
 import PatientHome from "../modules/patient/Home";
 
 
@@ -40,7 +40,7 @@ export default function AppRouter() {
     </ProtectedRoute>
   }>
     <Route path="home" element={<DoctorHome />} />
-    <Route path="gallery" element={<DoctorGallery />} />
+    <Route path="patients" element={<DoctorPatients />} />
   </Route>
 
   {}

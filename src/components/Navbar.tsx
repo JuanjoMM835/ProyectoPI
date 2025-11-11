@@ -39,7 +39,7 @@ export default function Navbar() {
       )}
 
       {role === "doctor" && (
-        <Link to="/doctor/gallery" style={{ color: "#fff" }}>
+        <Link to="/doctor/patients" style={{ color: "#fff" }}>
           Pacientes
         </Link>
       )}

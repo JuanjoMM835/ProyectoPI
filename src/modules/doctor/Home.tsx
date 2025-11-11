@@ -13,10 +13,6 @@ export default function DoctorHome() {
       <p className="subtitle">¿Qué te gustaría hacer hoy?</p>
 
       <div className="options">
-        <button onClick={() => navigate("/doctor/gallery")} className="btn">
-          🖼️ Galería de Pacientes
-        </button>
-
         <button onClick={() => navigate("/doctor/patients")} className="btn">
           👥 Mis Pacientes
         </button>
