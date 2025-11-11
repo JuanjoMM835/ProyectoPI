@@ -1,0 +1,93 @@
+.profile-container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  color: #34495e;
+}
+
+.profile-container h2 {
+  font-size: 26px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #3b76c4;
+}
+
+.photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #a9c9ff;
+  margin-bottom: 12px;
+}
+
+input[type="file"] {
+  margin: 10px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+label {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 15px;
+  display: block;
+  color: #47658e;
+}
+
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #dde7f7;
+  background: #f7faff;
+  font-size: 15px;
+  margin-top: 8px;
+  outline: none;
+  transition: 0.2s ease-in-out;
+}
+
+input[type="text"]:focus {
+  border-color: #3b76c4;
+}
+
+button {
+  width: 100%;
+  margin-top: 20px;
+  background: #3b76c4;
+  color: white;
+  padding: 13px;
+  font-size: 15px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.25s;
+  font-weight: 600;
+}
+
+button:hover {
+  background: #2a5e9d;
+}
+
+.msg {
+  margin-top: 15px;
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.msg.error {
+  color: #e74c3c;
+}
+

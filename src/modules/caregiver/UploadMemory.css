@@ -1,0 +1,228 @@
+.upload-memory-container {
+  max-width: 600px;
+  margin: 0 auto 40px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+  font-family: "Poppins", sans-serif;
+}
+
+.upload-title {
+  font-size: 24px;
+  color: #3b76c4;
+  margin-bottom: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.upload-subtitle {
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.image-upload-area {
+  display: block;
+  height: 250px;
+  border: 3px dashed #cbd5e1;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.image-upload-area:hover {
+  border-color: #3b76c4;
+  background: #f8fafc;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+}
+
+.upload-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.upload-text {
+  color: #64748b;
+  font-size: 15px;
+  text-align: center;
+}
+
+.preview-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.preview-container:hover .preview-overlay {
+  opacity: 1;
+}
+
+.preview-overlay p {
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.patient-select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.patient-select:focus {
+  border-color: #3b76c4;
+  background: white;
+}
+
+.patient-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.description-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #f8fafc;
+}
+
+.description-textarea:focus {
+  border-color: #3b76c4;
+  background: white;
+}
+
+.help-text {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 14px;
+  background: #3b76c4;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #2a5e9d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 118, 196, 0.3);
+}
+
+.submit-button:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.message {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.message.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+@media (max-width: 768px) {
+  .upload-memory-container {
+    margin: 0 15px 30px;
+    padding: 20px;
+  }
+
+  .image-upload-area {
+    height: 200px;
+  }
+
+  .upload-title {
+    font-size: 20px;
+  }
+}

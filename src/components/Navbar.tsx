@@ -4,6 +4,30 @@ import { useAuth } from "../auth/useAuth";
 export default function Navbar() {
   const { user, role, logout } = useAuth();
 
+  const getHomeLink = () => {
+    if (role === "patient") return "/patient/home";
+    if (role === "caregiver") return "/caregiver/home";
+    if (role === "doctor") return "/doctor/home";
+    return "/";
+  };
+
+  // Para cuidadores, solo mostrar el botón de Inicio
+  if (role === "caregiver") {
+    return (
+      <nav
+        style={{
+          display: "flex",
+          gap: "20px",
+          padding: "10px",
+          background: "#222",
+          color: "#fff",
+        }}
+      >
+        <Link to={getHomeLink()} style={{ color: "#fff" }}>Inicio</Link>
+      </nav>
+    );
+  }
+
   return (
     <nav
       style={{
@@ -14,28 +38,17 @@ export default function Navbar() {
         color: "#fff",
       }}
     >
-      {role === "patient" && (
-        <Link to="/patient/home" style={{ color: "#fff" }}>
-          Inicio
-        </Link>
-      )}
-
-      {role === "doctor" && (
-        <Link to="/doctor/home" style={{ color: "#fff" }}>
-          Inicio
-        </Link>
-      )}
-
-      {role === "caregiver" && (
-        <Link to="/caregiver/home" style={{ color: "#fff" }}>
-          Inicio
-        </Link>
-      )}
+      <Link to={getHomeLink()} style={{ color: "#fff" }}>Inicio</Link>
 
       {role === "patient" && (
-        <Link to="/patient/gallery" style={{ color: "#fff" }}>
-          Mis recuerdos
-        </Link>
+        <>
+          <Link to="/patient/gallery" style={{ color: "#fff" }}>
+            Mis recuerdos
+          </Link>
+          <Link to="/patient/profile" style={{ color: "#fff" }}>
+            Perfil
+          </Link>
+        </>
       )}
 
       {role === "doctor" && (
