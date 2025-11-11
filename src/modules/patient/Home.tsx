@@ -29,6 +29,12 @@ export default function PatientHome() {
 
         <button onClick={() => navigate("/patient/profile")} className="btn">
           👤 Mi Perfil
+
+
+        </button>
+
+         <button onClick={() => navigate("/patient/test")} className="btn">
+          Test Cognitivo
         </button>
       </div>
 

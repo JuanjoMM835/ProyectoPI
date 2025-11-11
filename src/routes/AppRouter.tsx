@@ -39,7 +39,7 @@ export default function AppRouter() {
         {/* Redirección inicial */}
         <Route path="/" element={<RoleBasedRedirect />} />
 
-        {/* Públicos */}
+        {/* Rutas públicas */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

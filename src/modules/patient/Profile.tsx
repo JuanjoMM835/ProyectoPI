@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { updateUserName, uploadProfilePhoto } from "../../api/userService";
 import { useAuth } from "../../auth/useAuth";
-import "./Profile.css";
+import "./profile.css";
 
 export default function PatientProfile() {
   const { user, name, photoURL, setUser } = useAuth();
