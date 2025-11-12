@@ -43,7 +43,7 @@ export default function MainLayout() {
   ];
 
   const doctorMenuItems = [
-    { path: "/doctor/gallery", icon: "📊", label: "Reportes", color: "#6B9BD1" },
+    { path: "/doctor/reports", icon: "📊", label: "Reportes", color: "#6B9BD1" },
     { path: "/doctor/patients", icon: "🏥", label: "Pacientes", color: "#52B788" },
     { path: "/doctor/analysis", icon: "🔬", label: "Análisis", color: "#F4A261" },
   ];

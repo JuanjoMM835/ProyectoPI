@@ -239,3 +239,166 @@ export function generateSimpleTestFromMemories(
     };
   });
 }
+
+/**
+ * Genera un reporte médico completo analizando los tests del paciente usando IA
+ */
+export async function generatePatientReport(
+  patientName: string,
+  tests: Array<{
+    title: string;
+    date: Date;
+    score: number;
+    totalQuestions: number;
+    totalTime: number;
+  }>
+): Promise<string> {
+  if (!apiKey) {
+    console.warn("⚠️ API Key no disponible. Generando reporte sin IA...");
+    return generateSimpleReport(patientName, tests);
+  }
+
+  try {
+    // Preparar los datos de los tests
+    const testsData = tests.map((test, index) => ({
+      numero: index + 1,
+      fecha: test.date.toLocaleDateString("es-ES"),
+      puntuacion: `${test.score}/${test.totalQuestions}`,
+      porcentaje: Math.round((test.score / test.totalQuestions) * 100),
+      tiempo: `${Math.floor(test.totalTime / 60)}m ${test.totalTime % 60}s`
+    }));
+
+    const prompt = `
+Eres un médico especialista en neurología y enfermedades neurodegenerativas como Alzheimer y demencia.
+
+Debes generar un REPORTE MÉDICO PROFESIONAL para el paciente "${patientName}" basándote en los resultados de ${tests.length} tests cognitivos realizados:
+
+${JSON.stringify(testsData, null, 2)}
+
+Tu reporte debe incluir:
+
+1. **RESUMEN EJECUTIVO** (2-3 líneas)
+   - Estado general de la memoria del paciente
+   
+2. **ANÁLISIS DE TENDENCIAS**
+   - ¿Hay mejoría, estabilidad o deterioro?
+   - Comparación entre el primer y último test
+   - Identificación de patrones
+   
+3. **EVALUACIÓN DEL RENDIMIENTO**
+   - Rendimiento promedio
+   - Consistencia en las respuestas
+   - Análisis del tiempo de respuesta
+   
+4. **OBSERVACIONES CLÍNICAS**
+   - Puntos fuertes identificados
+   - Áreas de preocupación
+   
+5. **RECOMENDACIONES**
+   - Sugerencias terapéuticas específicas
+   - Actividades recomendadas
+   - Frecuencia de evaluaciones futuras
+
+El reporte debe ser:
+- Profesional y empático
+- Basado en datos objetivos
+- Con lenguaje médico apropiado pero comprensible
+- Formato en Markdown con secciones claras
+- Máximo 500 palabras
+
+Genera el reporte ahora:`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "Eres un médico neurólogo especializado en evaluación cognitiva y enfermedades neurodegenerativas."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    const report = response.choices[0]?.message?.content || "";
+    
+    if (!report) {
+      throw new Error("No se recibió respuesta de la IA");
+    }
+
+    console.log("✅ Reporte generado con IA exitosamente");
+    return report;
+
+  } catch (error: any) {
+    console.error("❌ Error generando reporte con IA:", error);
+    
+    // Si hay error de cuota o cualquier otro, usar fallback
+    if (error.message?.toLowerCase().includes("quota") || 
+        error.message?.toLowerCase().includes("exceeded") ||
+        error.code === "insufficient_quota") {
+      console.warn("⚠️ Cuota de API excedida. Usando reporte simple (fallback)");
+    }
+    
+    return generateSimpleReport(patientName, tests);
+  }
+}
+
+/**
+ * Genera un reporte simple sin IA (fallback)
+ */
+function generateSimpleReport(
+  patientName: string,
+  tests: Array<{
+    title: string;
+    date: Date;
+    score: number;
+    totalQuestions: number;
+    totalTime: number;
+  }>
+): string {
+  const scores = tests.map(t => (t.score / t.totalQuestions) * 100);
+  const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+  const firstScore = scores[0];
+  const lastScore = scores[scores.length - 1];
+  const trend = lastScore > firstScore ? "mejoría" : lastScore < firstScore ? "leve deterioro" : "estabilidad";
+
+  return `# 📋 Reporte Médico - ${patientName}
+
+## 📊 Resumen Ejecutivo
+
+Se han evaluado **${tests.length} tests cognitivos** del paciente. El rendimiento promedio es de **${avgScore.toFixed(1)}%**, mostrando una tendencia de **${trend}** entre la primera y última evaluación.
+
+## 📈 Análisis de Tendencias
+
+- **Primera evaluación:** ${firstScore.toFixed(1)}%
+- **Última evaluación:** ${lastScore.toFixed(1)}%
+- **Cambio:** ${(lastScore - firstScore).toFixed(1)}%
+
+${lastScore > firstScore 
+  ? "✅ Se observa una tendencia positiva, indicando que las terapias y actividades están teniendo efecto beneficioso."
+  : lastScore < firstScore
+  ? "⚠️ Se detecta una leve disminución en el rendimiento. Se recomienda ajustar el plan terapéutico."
+  : "➡️ El rendimiento se mantiene estable, lo cual es positivo en el contexto de enfermedades neurodegenerativas."}
+
+## 🎯 Evaluación del Rendimiento
+
+- **Rendimiento Promedio:** ${avgScore.toFixed(1)}%
+- **Tests Completados:** ${tests.length}
+- **Rango:** ${Math.min(...scores).toFixed(1)}% - ${Math.max(...scores).toFixed(1)}%
+
+## 💡 Recomendaciones
+
+1. **Continuar con evaluaciones periódicas** (cada 1-2 semanas)
+2. **Mantener actividades de estimulación cognitiva** diarias
+3. **Reforzar memorias con álbumes fotográficos** familiares
+4. **Establecer rutinas** consistentes para mejorar orientación temporal
+5. **Realizar seguimiento** médico en caso de deterioro significativo
+
+---
+*Reporte generado automáticamente el ${new Date().toLocaleDateString("es-ES")}*
+`;
+}

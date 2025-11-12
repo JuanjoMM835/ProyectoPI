@@ -26,6 +26,7 @@ import DoctorPatients from "../modules/doctor/DoctorPatients";
 import DoctorGenerateTest from "../modules/doctor/GenerateTest";
 import DoctorPatientTests from "../modules/doctor/PatientTests";
 import DoctorTestDetails from "../modules/doctor/TestDetails";
+import DoctorReports from "../modules/doctor/Reports";
 
 function RoleBasedRedirect() {
   const { role } = useAuth();
@@ -72,6 +73,7 @@ export default function AppRouter() {
           <Route path="generate-test/:patientId" element={<DoctorGenerateTest />} />
           <Route path="patient-tests/:patientId" element={<DoctorPatientTests />} />
           <Route path="test-details/:testId" element={<DoctorTestDetails />} />
+          <Route path="reports" element={<DoctorReports />} />
         </Route>
 
         {/* Rutas Cuidador */}

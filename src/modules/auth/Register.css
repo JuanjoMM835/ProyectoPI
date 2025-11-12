@@ -1,7 +1,7 @@
 /* ========================================= */
 /* Fondo Degradado                           */
 /* ========================================= */
-.login-page {
+.register-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -11,9 +11,9 @@
 }
 
 /* ========================================= */
-/* Contenedor Principal - Login              */
+/* Contenedor Principal - Register           */
 /* ========================================= */
-.login-container {
+.register-container {
   max-width: 480px;
   width: 100%;
   padding: 40px;
@@ -33,7 +33,7 @@
 /* ========================================= */
 /* Logo                                      */
 /* ========================================= */
-.login-logo {
+.register-logo {
   width: 180px;
   height: auto;
   margin-bottom: 20px;
@@ -46,7 +46,7 @@
 /* ========================================= */
 /* Título Principal                          */
 /* ========================================= */
-.login-title {
+.register-title {
   font-size: 32px;
   color: #1e3a8a; /* Azul profesional */
   font-weight: 700;
@@ -54,7 +54,7 @@
   letter-spacing: -0.5px;
 }
 
-.login-subtitle {
+.register-subtitle {
   font-size: 15px;
   color: #6b7280;
   margin-bottom: 32px;
@@ -62,29 +62,9 @@
 }
 
 /* ========================================= */
-/* Formulario                                */
-/* ========================================= */
-.login-form {
-  text-align: left;
-}
-
-.login-form-group {
-  margin-bottom: 18px;
-}
-
-.login-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 6px;
-  text-align: left;
-}
-
-/* ========================================= */
 /* Mensaje de Error                          */
 /* ========================================= */
-.login-error {
+.register-error {
   background: #fee2e2;
   color: #dc2626;
   padding: 12px 16px;
@@ -93,12 +73,31 @@
   margin-bottom: 20px;
   border-left: 4px solid #ef4444;
   font-weight: 500;
+  text-align: left;
 }
 
 /* ========================================= */
-/* Inputs del Formulario                     */
+/* Formulario                                */
 /* ========================================= */
-.login-input {
+.register-form {
+  text-align: left;
+}
+
+.register-form-group {
+  margin-bottom: 18px;
+}
+
+.register-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.register-input,
+.register-select {
   width: 100%;
   padding: 14px 16px;
   border: 2px solid #e5e7eb;
@@ -111,20 +110,31 @@
   box-sizing: border-box;
 }
 
-.login-input:focus {
+.register-input:focus,
+.register-select:focus {
   border-color: #3b82f6;
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.login-input::placeholder {
+.register-input::placeholder {
   color: #9ca3af;
+}
+
+/* Select específico */
+.register-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
 }
 
 /* ========================================= */
 /* Botón de Enviar                           */
 /* ========================================= */
-.login-btn {
+.register-btn {
   width: 100%;
   padding: 16px;
   font-size: 17px;
@@ -140,33 +150,33 @@
   margin-top: 8px;
 }
 
-.login-btn:hover {
+.register-btn:hover {
   background: #2563eb;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.login-btn:active {
+.register-btn:active {
   transform: translateY(0);
 }
 
 /* ========================================= */
-/* Enlace de Registro                        */
+/* Enlace de Login                           */
 /* ========================================= */
-.login-register {
+.register-login {
   margin-top: 24px;
   font-size: 15px;
   color: #6b7280;
 }
 
-.login-register span {
+.register-login span {
   color: #3b82f6;
   cursor: pointer;
   font-weight: 600;
   transition: color 0.2s ease;
 }
 
-.login-register span:hover {
+.register-login span:hover {
   color: #2563eb;
   text-decoration: underline;
 }
@@ -175,21 +185,22 @@
 /* Responsive Design                         */
 /* ========================================= */
 @media (max-width: 640px) {
-  .login-container {
+  .register-container {
     margin: 30px 20px;
     padding: 30px 20px;
   }
 
-  .login-title {
+  .register-title {
     font-size: 26px;
   }
 
-  .login-input {
+  .register-input,
+  .register-select {
     padding: 12px 14px;
     font-size: 14px;
   }
 
-  .login-btn {
+  .register-btn {
     padding: 14px;
     font-size: 16px;
   }
