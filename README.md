@@ -488,5 +488,8 @@ Este proyecto es parte de un **Proyecto Informático** de la **Universidad Autó
 **Hecho con ❤️ para mejorar la calidad de vida de pacientes con Alzheimer**
 
 🧠 **DoURemember** - _Porque los recuerdos importan_
+Creado por : Juan Diego Palacios Orozco - 2224970
+             David Esteban Barreto Alban -2226218
+             Juan Jose Moncayo Martinez - 2225678
 
 </div>
