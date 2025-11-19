@@ -10,7 +10,7 @@ import { useAuth } from "../auth/useAuth";
 import PatientHome from "../modules/patient/Home";
 import PatientProfile from "../modules/patient/Profile";
 import Reminders from "../modules/patient/reminders";
-import Test from "../modules/patient/Test";
+import PatientTestsPage from "../modules/patient/TestsPage";
 import TakeTest from "../modules/patient/TakeTest";
 
 // Cuidador
@@ -22,8 +22,9 @@ import GenerateTest from "../modules/caregiver/GenerateTest";
 
 // Médico
 import DoctorHome from "../modules/doctor/Home";
-import DoctorPatients from "../modules/doctor/DoctorPatients";
+import DoctorProfile from "../modules/doctor/Profile";
 import DoctorGenerateTest from "../modules/doctor/GenerateTest";
+import CreateTestForm from "../modules/doctor/CreateTestForm";
 import DoctorPatientTests from "../modules/doctor/PatientTests";
 import DoctorTestDetails from "../modules/doctor/TestDetails";
 import DoctorReports from "../modules/doctor/Reports";
@@ -58,7 +59,7 @@ export default function AppRouter() {
           <Route path="home" element={<PatientHome />} />
           <Route path="profile" element={<PatientProfile />} />
           <Route path="reminders" element={<Reminders />} />
-          <Route path="test" element={<Test />} />
+          <Route path="tests" element={<PatientTestsPage />} />
           <Route path="test/:testId" element={<TakeTest />} />
         </Route>
 
@@ -69,11 +70,12 @@ export default function AppRouter() {
           </ProtectedRoute>
         }>
           <Route path="home" element={<DoctorHome />} />
-          <Route path="patients" element={<DoctorPatients />} />
-          <Route path="generate-test/:patientId" element={<DoctorGenerateTest />} />
+          <Route path="patients" element={<DoctorGenerateTest />} />
+          <Route path="patients/:patientId" element={<CreateTestForm />} />
           <Route path="patient-tests/:patientId" element={<DoctorPatientTests />} />
           <Route path="test-details/:testId" element={<DoctorTestDetails />} />
           <Route path="reports" element={<DoctorReports />} />
+          <Route path="profile" element={<DoctorProfile />} />
         </Route>
 
         {/* Rutas Cuidador */}

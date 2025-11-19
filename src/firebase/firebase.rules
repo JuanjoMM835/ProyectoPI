@@ -8,11 +8,10 @@ service cloud.firestore {
       // Permitir lectura y escritura si eres el propio usuario
       allow read, write: if request.auth != null && request.auth.uid == userId;
       
-      // ✨ Permitir que los doctores lean datos de sus pacientes
+      // ✨ Permitir que los doctores lean TODOS los usuarios (para estadísticas)
       allow read: if request.auth != null && 
                      exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
-                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([userId]);
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor';
       
       // ✨ Permitir que los cuidadores lean datos de sus pacientes
       allow read: if request.auth != null && 
@@ -59,14 +58,16 @@ service cloud.firestore {
       allow read, update, delete: if request.auth != null
           && request.auth.uid == resource.data.userId;
       
-      // ✨ Permitir que doctores y cuidadores lean/editen/borren memorias de sus pacientes
+      // ✨ Permitir que doctores lean TODAS las memorias (para estadísticas)
+      allow read: if request.auth != null && 
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor';
+      
+      // ✨ Permitir que cuidadores lean/editen/borren memorias de sus pacientes
       allow read, update, delete: if request.auth != null && 
-                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
-                       (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
-                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.userId])) ||
-                       (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
-                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.userId]))
-                     );
+                     exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.userId]);
       
       // ✨ AGREGADO: Permitir leer/editar/borrar por caregiverId o doctorId (para la galería del cuidador)
       allow read, update, delete: if request.auth != null && (
@@ -109,11 +110,10 @@ service cloud.firestore {
       allow read: if request.auth != null && 
                      resource.data.patientId == request.auth.uid;
       
-      // Doctores pueden leer tests de sus pacientes
+      // ✨ Doctores pueden leer TODOS los tests (para estadísticas y gestión)
       allow read: if request.auth != null && 
                      exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
-                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]);
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor';
       
       // Cuidadores pueden leer tests de sus pacientes
       allow read: if request.auth != null && 
@@ -127,14 +127,16 @@ service cloud.firestore {
                        request.resource.data.status == 'completed' &&
                        resource.data.status == 'pending';
       
-      // Doctores y cuidadores pueden actualizar/eliminar tests de sus pacientes
+      // ✨ Doctores pueden actualizar/eliminar TODOS los tests
       allow update, delete: if request.auth != null && 
-                               exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
-                                 (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor' &&
-                                  get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId])) ||
-                                 (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
-                                  get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]))
-                               );
+                               exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'doctor';
+      
+      // Cuidadores pueden actualizar/eliminar tests de sus pacientes
+      allow update, delete: if request.auth != null && 
+                               exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'caregiver' &&
+                               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.patientIds.hasAny([resource.data.patientId]);
     }
     
     // ✨✨✨ NUEVO: Resultados de Tests (testResults)

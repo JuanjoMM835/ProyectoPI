@@ -1,94 +1,389 @@
 /* ========================================= */
-/* 1. Contenedor Principal: .patient-home    */
+/* Dashboard Principal del Paciente           */
 /* ========================================= */
-.patient-home {
-  /* Tamaño y centrado */
-  max-width: 580px; /* Un poco más ancho */
-  margin: 60px auto;
-  padding: 40px; /* Más padding interno para "respirar" */
 
-  /* Estilo visual */
-  font-family: "Poppins", sans-serif;
-  background: #ffffff; /* Blanco puro */
-  border-radius: 20px; /* Bordes más redondeados */
-  
-  /* Sombra más profunda y suave (Elevación 2) */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05); 
-  
-  text-align: center;
-  transition: transform 0.3s ease; /* Transición sutil al cargar */
+.patient-dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: "Segoe UI", "Roboto", sans-serif;
+  background: #f5f7fa;
+  min-height: 100vh;
 }
 
----
 /* ========================================= */
-/* 2. Tipografía: Títulos y Subtítulos      */
+/* Header del Dashboard                       */
 /* ========================================= */
-.title {
-  font-size: 32px; /* Un poco más grande para impacto */
-  color: #1e3a8a; /* Azul oscuro (más profesional) */
-  font-weight: 700; /* Más peso */
-  margin-bottom: 5px;
+
+.dashboard-header {
+  margin-bottom: 20px;
 }
 
-.subtitle {
+.welcome-section {
+  text-align: left;
+}
+
+.dashboard-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 5px 0;
+}
+
+.dashboard-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ========================================= */
+/* Banner de Bienvenida                       */
+/* ========================================= */
+
+.welcome-banner {
+  background: linear-gradient(90deg, #14b8a6 0%, #3b82f6 100%);
+  border-radius: 16px;
+  padding: 30px 35px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15);
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+.welcome-text {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ========================================= */
+/* Acciones Rápidas                           */
+/* ========================================= */
+
+.actions-section {
+  margin-bottom: 35px;
+}
+
+.section-title {
   font-size: 18px;
-  color: #6b7280; /* Gris medio (más suave) */
-  margin-top: 5px;
-  margin-bottom: 30px; /* Separación del bloque de opciones */
-  line-height: 1.4;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 20px 0;
 }
 
----
-/* ========================================= */
-/* 3. Opciones y Botones                    */
-/* ========================================= */
-.options {
-  margin-top: 25px;
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.action-card {
+  background: white;
+  border-radius: 12px;
+  padding: 28px 20px;
   display: flex;
   flex-direction: column;
-  gap: 18px; /* Un poco más de espacio entre botones */
-}
-
-.btn {
-  /* Nuevo color primario más vibrante, pero profesional */
-  background: #3b82f6; 
-  color: white;
-  padding: 16px; /* Más acolchado */
-  border: none;
-  border-radius: 12px; /* Bordes ligeramente menos redondeados que el contenedor */
-  font-size: 17px;
-  font-weight: 600;
-  text-transform: uppercase; /* Darle un toque moderno */
-  letter-spacing: 0.5px;
-  
-  /* Transiciones suaves */
-  transition: background 0.3s ease, transform 0.1s ease; 
+  align-items: center;
+  gap: 12px;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn:hover {
-  background: #2563eb; /* Un azul ligeramente más oscuro */
-  transform: translateY(-1px); /* Efecto de "levantamiento" sutil */
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
-.btn:active {
-  transform: translateY(0); /* Efecto de "presión" */
+.action-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 
-/* Botón de Cerrar Sesión (logout-btn) */
-.logout-btn {
-  margin-top: 35px;
-  background: #ef4444; /* Rojo más moderno */
-  opacity: 0.85; /* Un poco de transparencia para diferenciarlo */
+.action-blue {
+  background: #3b82f6;
 }
 
-.logout-btn:hover {
-  background: #dc2626; 
-  opacity: 1;
+.action-green {
+  background: #14b8a6;
 }
 
-/* Sección de Tests */
-.tests-section {
-  margin-top: 40px;
+.action-purple {
+  background: #8b5cf6;
+}
+
+.action-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: center;
+}
+
+/* ========================================= */
+/* Sección Inferior (Tests y Alertas)        */
+/* ========================================= */
+
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 25px;
+}
+
+.recent-tests,
+.alerts-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+}
+
+.badge,
+.alert-badge {
+  background: #14b8a6;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ========================================= */
+/* Lista de Tests                             */
+/* ========================================= */
+
+.tests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.test-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.test-item:hover {
+  background: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.test-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+}
+
+.test-icon.status-completed {
+  background: #14b8a6;
+}
+
+.test-icon.status-pending {
+  background: #f59e0b;
+}
+
+.test-info {
+  flex: 1;
+}
+
+.test-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.test-patient {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.test-meta {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.test-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.test-status.completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.test-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.test-time {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* ========================================= */
+/* Estado Vacío                               */
+/* ========================================= */
+
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  background: #f0fdfa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #14b8a6;
+}
+
+.empty-state p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ========================================= */
+/* Panel de Estadísticas                      */
+/* ========================================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  background: #f3f4f6;
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+}
+
+.stat-pending {
+  background: #f59e0b;
+}
+
+.stat-completed {
+  background: #14b8a6;
+}
+
+.stat-memories {
+  background: #8b5cf6;
+}
+
+.stat-reminders {
+  background: #3b82f6;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ========================================= */
+/* Responsive                                 */
+/* ========================================= */
+
+@media (max-width: 1200px) {
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .alerts-panel {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .patient-dashboard {
+    padding: 20px;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-banner {
+    padding: 24px;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+  }
 }

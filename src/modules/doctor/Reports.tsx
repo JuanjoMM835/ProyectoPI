@@ -121,87 +121,63 @@ export default function DoctorReports() {
 
   return (
     <div className="reports-container">
+      {/* Header */}
       <div className="reports-header">
-        <h2>📊 Reportes Médicos de Pacientes</h2>
-        <p className="subtitle">
-          Genera reportes detallados con análisis de IA para pacientes con 3 o más tests completados
-        </p>
+        <div className="header-content">
+          <h1 className="reports-title">Reportes Médicos</h1>
+          <p className="reports-subtitle">Genera reportes detallados con análisis de IA</p>
+        </div>
       </div>
 
       {patients.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-icon">👥</div>
+          <div className="empty-icon">📊</div>
           <h3>No hay pacientes registrados</h3>
-          <p>Agrega pacientes para poder generar reportes.</p>
+          <p>Agrega pacientes para poder generar reportes médicos.</p>
         </div>
       ) : (
-        <div className="patients-grid">
+        <div className="patients-reports-list">
           {patients.map((patient) => (
-            <div
-              key={patient.uid}
-              className={`patient-report-card ${!patient.canGenerateReport ? "disabled" : ""}`}
-            >
-              <div className="card-header">
-                <div className="patient-avatar">
-                  {patient.name.charAt(0).toUpperCase()}
+            <div key={patient.uid} className="patient-report-card">
+              <div className="report-card-content">
+                <div className="patient-info-section">
+                  <div className="patient-avatar-circle">
+                    {patient.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="patient-details-section">
+                    <h3 className="patient-name-text">{patient.name}</h3>
+                    <p className="patient-email-text">{patient.email}</p>
+                  </div>
                 </div>
-                <div className="patient-info">
-                  <h3>{patient.name}</h3>
-                  <p className="patient-email">{patient.email}</p>
+
+                <div className="stats-section">
+                  <div className="stat-box">
+                    <span className="stat-number">{patient.testCount}</span>
+                    <span className="stat-text">Tests Completados</span>
+                  </div>
+                  <div className={`status-indicator ${patient.canGenerateReport ? "ready" : "pending"}`}>
+                    {patient.canGenerateReport
+                      ? "✓ Listo"
+                      : `Faltan ${3 - patient.testCount}`}
+                  </div>
                 </div>
               </div>
 
-              <div className="card-body">
-                <div className="stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Tests Completados:</span>
-                    <span className={`stat-value ${patient.canGenerateReport ? "ready" : ""}`}>
-                      {patient.testCount}
-                    </span>
-                  </div>
-
-                  <div className="stat-item">
-                    <span className="stat-label">Estado:</span>
-                    <span className={`status-badge ${patient.canGenerateReport ? "ready" : "pending"}`}>
-                      {patient.canGenerateReport
-                        ? "✅ Listo para reporte"
-                        : `⏳ ${3 - patient.testCount} tests más`}
-                    </span>
-                  </div>
-                </div>
-
-                {patient.canGenerateReport && (
-                  <div className="progress-info">
-                    <p className="tests-list-label">📝 Tests disponibles para análisis:</p>
-                    <ul className="tests-list">
-                      {patient.completedTests.slice(0, 3).map((test) => (
-                        <li key={test.id}>
-                          {test.title} - {test.completedAt?.toDate().toLocaleDateString("es-ES")}
-                        </li>
-                      ))}
-                      {patient.completedTests.length > 3 && (
-                        <li className="more">Y {patient.completedTests.length - 3} más...</li>
-                      )}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              <div className="card-footer">
+              <div className="report-card-actions">
                 <button
-                  className="generate-report-btn"
+                  className={`btn-generate-report ${!patient.canGenerateReport ? "disabled" : ""}`}
                   onClick={() => handleGenerateReport(patient)}
                   disabled={!patient.canGenerateReport || generatingReport === patient.uid}
                 >
                   {generatingReport === patient.uid ? (
                     <>
                       <div className="btn-spinner"></div>
-                      Generando reporte con IA...
+                      Generando...
                     </>
                   ) : patient.canGenerateReport ? (
-                    <>🤖 Generar Reporte con IA</>
+                    "Generar Reporte"
                   ) : (
-                    <>🔒 Requiere 3 tests mínimo</>
+                    "Requiere 3 tests"
                   )}
                 </button>
               </div>

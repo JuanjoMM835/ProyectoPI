@@ -1,210 +1,188 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { generateTestFromMemories } from "../../api/aiTestService";
-import { createTest } from "../../api/testService";
-import { getMemories } from "../../api/memoryService";
-import { getPatientById } from "../../api/patientService";
+import { useNavigate } from "react-router-dom";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../../firebase/firebase";
 import { useAuth } from "../../auth/useAuth";
 import "./GenerateTest.css";
 
+interface Patient {
+  id: string;
+  name: string;
+  email: string;
+  lastTestDate?: string;
+  testsCount?: number;
+}
+
 export default function DoctorGenerateTest() {
-  const { patientId } = useParams<{ patientId: string }>();
-  const location = useLocation();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [patientName, setPatientName] = useState(location.state?.patientName || "");
-  const [loading, setLoading] = useState(false);
-  const [loadingPatient, setLoadingPatient] = useState(!patientName);
-  const [numberOfQuestions, setNumberOfQuestions] = useState(5);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
 
   useEffect(() => {
-    if (patientId && !patientName) {
-      loadPatientInfo();
-    }
-  }, [patientId, patientName]);
+    loadPatients();
+  }, []);
 
-  const loadPatientInfo = async () => {
-    try {
-      setLoadingPatient(true);
-      const patient = await getPatientById(patientId!);
-      if (patient) {
-        setPatientName(patient.name || patient.email);
-      }
-    } catch (err) {
-      console.error("Error loading patient:", err);
-      setError("No se pudo cargar la información del paciente");
-    } finally {
-      setLoadingPatient(false);
-    }
-  };
+  useEffect(() => {
+    filterPatients();
+  }, [searchTerm, statusFilter, patients]);
 
-  const handleGenerateTest = async () => {
-    if (!patientId) {
-      setError("ID de paciente inválido");
-      return;
-    }
-
+  const loadPatients = async () => {
     try {
       setLoading(true);
-      setError("");
-
-      // 1. Obtener memorias del paciente
-      console.log("📚 Obteniendo memorias del paciente...");
-      const memories = await getMemories(patientId, "doctor");
-
-      if (memories.length < 3) {
-        setError(
-          `Se necesitan al menos 3 memorias para generar un test. El paciente solo tiene ${memories.length}.`
+      
+      // Obtener todos los pacientes
+      const usersRef = collection(db, "users");
+      const patientsQuery = query(usersRef, where("role", "==", "patient"));
+      const patientsSnapshot = await getDocs(patientsQuery);
+      
+      // Obtener tests para cada paciente
+      const testsRef = collection(db, "tests");
+      const testsSnapshot = await getDocs(testsRef);
+      
+      const patientsData: Patient[] = [];
+      
+      for (const doc of patientsSnapshot.docs) {
+        const patientData = doc.data();
+        const patientTests = testsSnapshot.docs.filter(
+          testDoc => testDoc.data().patientId === doc.id
         );
-        return;
+        
+        // Encontrar el último test
+        let lastTestDate = undefined;
+        if (patientTests.length > 0) {
+          const sortedTests = patientTests.sort((a, b) => {
+            const dateA = a.data().createdAt?.toDate() || new Date(0);
+            const dateB = b.data().createdAt?.toDate() || new Date(0);
+            return dateB.getTime() - dateA.getTime();
+          });
+          const lastTest = sortedTests[0].data();
+          if (lastTest.createdAt) {
+            lastTestDate = lastTest.createdAt.toDate().toLocaleDateString("es-ES");
+          }
+        }
+        
+        patientsData.push({
+          id: doc.id,
+          name: patientData.name || "Sin nombre",
+          email: patientData.email,
+          lastTestDate,
+          testsCount: patientTests.length
+        });
       }
-
-      console.log(`✅ ${memories.length} memorias encontradas`);
-
-      // 2. Generar preguntas con IA
-      console.log("🤖 Generando preguntas con IA...");
-      const questions = await generateTestFromMemories(
-        memories,
-        Math.min(numberOfQuestions, memories.length)
-      );
-
-      console.log(`✅ ${questions.length} preguntas generadas`);
-
-      // 3. Crear test en Firestore
-      console.log("💾 Guardando test...");
-      const testId = await createTest(
-        patientId,
-        questions,
-        { id: user!.uid, role: "doctor" },
-        `Test Médico - ${new Date().toLocaleDateString("es-ES")}`,
-        `Test generado por el Dr. ${user?.name || user?.email} para evaluación cognitiva`
-      );
-
-      console.log(`✅ Test creado con ID: ${testId}`);
-      setSuccess(true);
-
-      // Redirigir después de 2 segundos
-      setTimeout(() => {
-        navigate("/doctor/patients");
-      }, 2000);
-    } catch (error: any) {
-      console.error("❌ Error generando test:", error);
-      setError(
-        error.message || "Error generando test. Por favor, intenta de nuevo."
-      );
+      
+      setPatients(patientsData);
+      setFilteredPatients(patientsData);
+    } catch (error) {
+      console.error("Error loading patients:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loadingPatient) {
+  const filterPatients = () => {
+    let filtered = [...patients];
+    
+    // Filtrar por búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(patient =>
+        patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    // Filtrar por estado (si implementas estados)
+    // Por ahora solo mostramos todos
+    
+    setFilteredPatients(filtered);
+  };
+
+  const handleCreateTest = (patientId: string, patientName: string) => {
+    navigate(`/doctor/patients/${patientId}`, {
+      state: { patientName }
+    });
+  };
+
+  if (loading) {
     return (
-      <div className="generate-test-container">
+      <div className="tests-dashboard-container">
         <div className="loading-state">
           <div className="spinner"></div>
-          <p>Cargando información del paciente...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!patientId || !patientName) {
-    return (
-      <div className="generate-test-container">
-        <div className="error-message">
-          <span>⚠️</span> Paciente no encontrado
-        </div>
-      </div>
-    );
-  }
-
-  if (success) {
-    return (
-      <div className="generate-test-container">
-        <div className="success-message">
-          <div className="success-icon">✅</div>
-          <h2>¡Test Creado Exitosamente!</h2>
-          <p>
-            El test médico para <strong>{patientName}</strong> ha sido generado.
-          </p>
-          <p className="redirect-message">Redirigiendo a pacientes...</p>
+          <p>Cargando pacientes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="generate-test-container">
-      <div className="generate-test-card">
-        <div className="doctor-badge">👨‍⚕️ Evaluación Médica</div>
-        <h2>🤖 Generar Test con IA</h2>
-        <p className="subtitle">
-          Crear evaluación cognitiva para <strong>{patientName}</strong>
-        </p>
+    <div className="tests-dashboard-container">
+      {/* Header */}
+      <div className="tests-header">
+        <div className="header-content">
+          <h1 className="tests-title">Mis Pacientes</h1>
+          <p className="tests-subtitle">Administra y realiza tests a tus pacientes</p>
+        </div>
+      </div>
 
-        <div className="form-section">
-          <label htmlFor="questions">
-            Número de preguntas:
-            <span className="question-count">{numberOfQuestions}</span>
-          </label>
+      {/* Search Bar */}
+      <div className="search-filter-bar">
+        <div className="search-box">
+          <svg className="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
           <input
-            type="range"
-            id="questions"
-            min="3"
-            max="10"
-            value={numberOfQuestions}
-            onChange={(e) => setNumberOfQuestions(Number(e.target.value))}
-            disabled={loading}
+            type="text"
+            placeholder="Buscar paciente por nombre o email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <div className="range-labels">
-            <span>3</span>
-            <span>5</span>
-            <span>7</span>
-            <span>10</span>
-          </div>
         </div>
+      </div>
 
-        {error && (
-          <div className="error-message">
-            <span>⚠️</span> {error}
+      {/* Patients List */}
+      <div className="patients-tests-list">
+        {filteredPatients.length === 0 ? (
+          <div className="no-patients-message">
+            <p>No se encontraron pacientes</p>
           </div>
+        ) : (
+          filteredPatients.map((patient) => (
+            <div key={patient.id} className="patient-test-card">
+              <div className="patient-test-info">
+                <div className="patient-icon">👤</div>
+                <div className="patient-details">
+                  <h3 className="patient-name">{patient.name}</h3>
+                  <div className="patient-meta">
+                    <span className="patient-email">{patient.email}</span>
+                    {patient.lastTestDate && (
+                      <>
+                        <span className="meta-separator">•</span>
+                        <span className="last-test">Último test: {patient.lastTestDate}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="patient-actions">
+                <button 
+                  className="btn-view-details"
+                  onClick={() => navigate(`/doctor/patient-tests/${patient.id}`)}
+                >
+                  Ver Detalles
+                </button>
+                <button 
+                  className="btn-start-test"
+                  onClick={() => handleCreateTest(patient.id, patient.name)}
+                >
+                  Iniciar Test
+                </button>
+              </div>
+            </div>
+          ))
         )}
-
-        <div className="info-box doctor-info">
-          <h4>ℹ️ Información Médica</h4>
-          <ul>
-            <li>La IA analizará las memorias del paciente</li>
-            <li>Se generarán preguntas de evaluación cognitiva</li>
-            <li>Los resultados estarán disponibles en estadísticas</li>
-            <li>El proceso toma aproximadamente 1-2 minutos</li>
-          </ul>
-        </div>
-
-        <div className="button-group">
-          <button
-            onClick={() => navigate("/doctor/patients")}
-            className="cancel-btn"
-            disabled={loading}
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleGenerateTest}
-            className="generate-btn doctor-generate"
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <span className="spinner"></span>
-                Generando Test...
-              </>
-            ) : (
-              <>🧠 Generar Evaluación</>
-            )}
-          </button>
-        </div>
       </div>
     </div>
   );
