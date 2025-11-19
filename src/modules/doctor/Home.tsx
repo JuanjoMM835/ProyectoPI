@@ -133,14 +133,14 @@ export default function DoctorHome() {
           })
       );
 
-      // Ordenar por fecha (más recientes primero) y limitar a 4
+      // Ordenar por fecha (más recientes primero) y limitar a 1
       const sorted = testsWithPatients
         .sort((a, b) => {
           const dateA = a.completedAt || a.createdAt;
           const dateB = b.completedAt || b.createdAt;
           return (dateB?.seconds || 0) - (dateA?.seconds || 0);
         })
-        .slice(0, 4);
+        .slice(0, 1);
 
       setRecentTests(sorted);
     } catch (error) {
@@ -230,6 +230,52 @@ export default function DoctorHome() {
       <div className="welcome-banner">
         <h2 className="welcome-title">¡Bienvenida de nuevo, Dr. {user?.name || "Doctor"}!</h2>
         <p className="welcome-text">Aquí está un resumen de tu actividad médica.</p>
+      </div>
+
+      {/* Estadísticas principales */}
+      <div className="stats-section-wrapper">
+        <h3 className="section-title">Estadísticas Clave</h3>
+        <div className="stats-grid-horizontal">
+          <div className="stat-card-horizontal">
+            <div className="stat-text-content">
+              <div className="stat-label-horizontal">Total Pacientes</div>
+              <div className="stat-value-horizontal">{stats.totalPatients}</div>
+            </div>
+            <div className="stat-icon-horizontal stat-icon-blue">
+              <span>👥</span>
+            </div>
+          </div>
+
+          <div className="stat-card-horizontal">
+            <div className="stat-text-content">
+              <div className="stat-label-horizontal">Tests Completados</div>
+              <div className="stat-value-horizontal">{stats.completedTests}</div>
+            </div>
+            <div className="stat-icon-horizontal stat-icon-green">
+              <span>✅</span>
+            </div>
+          </div>
+
+          <div className="stat-card-horizontal">
+            <div className="stat-text-content">
+              <div className="stat-label-horizontal">Pacientes Activos</div>
+              <div className="stat-value-horizontal">{stats.totalPatients}</div>
+            </div>
+            <div className="stat-icon-horizontal stat-icon-purple">
+              <span>📊</span>
+            </div>
+          </div>
+
+          <div className="stat-card-horizontal">
+            <div className="stat-text-content">
+              <div className="stat-label-horizontal">Tests Pendientes</div>
+              <div className="stat-value-horizontal">{stats.pendingTests}</div>
+            </div>
+            <div className="stat-icon-horizontal stat-icon-orange">
+              <span>📅</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Acciones rápidas */}

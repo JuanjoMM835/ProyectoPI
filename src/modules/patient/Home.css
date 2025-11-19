@@ -124,6 +124,10 @@
   background: #8b5cf6;
 }
 
+.action-teal {
+  background: #14b8a6;
+}
+
 .action-label {
   font-size: 15px;
   font-weight: 600;
@@ -137,7 +141,7 @@
 
 .bottom-section {
   display: grid;
-  grid-template-columns: 1fr 450px;
+  grid-template-columns: 1.2fr 450px;
   gap: 25px;
 }
 
@@ -213,6 +217,8 @@
 
 .test-info {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .test-name {
@@ -220,6 +226,9 @@
   font-weight: 600;
   color: #1e293b;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .test-patient {
@@ -232,6 +241,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .test-status {
@@ -385,5 +395,16 @@
 
   .welcome-title {
     font-size: 20px;
+  }
+
+  .test-item {
+    flex-wrap: wrap;
+  }
+
+  .test-meta {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 8px;
   }
 }

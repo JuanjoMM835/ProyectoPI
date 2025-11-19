@@ -9,7 +9,7 @@ export default function MainLayout() {
   const location = useLocation();
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    navigate("/home");
   };
 
   const isActive = (path: string) => {
@@ -19,17 +19,16 @@ export default function MainLayout() {
   const patientMenuItems = [
     { path: "/patient/home", icon: "📊", label: "Dashboard" },
     { path: "/patient/tests", icon: "📋", label: "Tests" },
-    { path: "/patient/gallery", icon: "🖼️", label: "Galería" },
     { path: "/patient/reminders", icon: "⏰", label: "Recordatorios" },
     { path: "/patient/profile", icon: "👤", label: "Perfil" },
   ];
 
   const caregiverMenuItems = [
-    { path: "/caregiver/home", icon: "�", label: "Dashboard" },
+    { path: "/caregiver/home", icon: "📊", label: "Dashboard" },
     { path: "/caregiver/family", icon: "👥", label: "Familia" },
     { path: "/caregiver/gallery", icon: "🖼️", label: "Galería" },
-    { path: "/caregiver/upload-memory", icon: "�", label: "Subir Recuerdo" },
-    { path: "/caregiver/profile", icon: "�", label: "Perfil" },
+    { path: "/caregiver/upload-memory", icon: "📸", label: "Subir Recuerdo" },
+    { path: "/caregiver/profile", icon: "👤", label: "Perfil" },
   ];
 
   const doctorMenuItems = [

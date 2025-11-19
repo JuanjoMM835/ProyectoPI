@@ -67,21 +67,84 @@
 /* Sección de Estadísticas                    */
 /* ========================================= */
 
-.stats-section {
+.stats-section-wrapper {
   margin-bottom: 35px;
-  display: block;
 }
 
-.stats-section .section-title {
-  font-size: 18px;
-  font-weight: 600;
+.stats-grid-horizontal {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.stat-card-horizontal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.stat-card-horizontal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-text-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-label-horizontal {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.stat-value-horizontal {
+  font-size: 32px;
+  font-weight: 700;
   color: #1e293b;
-  margin: 0 0 20px 0;
-  display: block;
-  width: 100%;
-  clear: both;
+  line-height: 1;
 }
 
+.stat-icon-horizontal {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.stat-icon-horizontal.stat-icon-blue {
+  background: #3b82f6;
+  color: white;
+}
+
+.stat-icon-horizontal.stat-icon-green {
+  background: #10b981;
+  color: white;
+}
+
+.stat-icon-horizontal.stat-icon-purple {
+  background: #8b5cf6;
+  color: white;
+}
+
+.stat-icon-horizontal.stat-icon-orange {
+  background: #f97316;
+  color: white;
+}
+
+/* Estadísticas antiguas (mantener para compatibilidad) */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -130,10 +193,6 @@
 
 .stat-orange .stat-icon {
   background: #fed7aa;
-}
-
-.stat-content {
-  flex: 1;
 }
 
 .stat-label {
@@ -497,6 +556,10 @@
 /* ========================================= */
 
 @media (max-width: 1200px) {
+  .stats-grid-horizontal {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -509,6 +572,10 @@
 @media (max-width: 768px) {
   .doctor-dashboard {
     padding: 20px 15px;
+  }
+
+  .stats-grid-horizontal {
+    grid-template-columns: 1fr;
   }
 
   .stats-grid {

@@ -17,6 +17,7 @@ export interface PatientProfile {
   doctorId?: string;
   doctorName?: string;
   caregiverId?: string;
+  completedTests?: number;
 }
 
 export interface Activity {
@@ -62,10 +63,34 @@ export async function getPatientsForCaregiver(caregiverId: string): Promise<Pati
         
         if (patientDoc.exists()) {
           const data = patientDoc.data();
-          console.log("� Paciente encontrado:", {
+          console.log("👤 Paciente encontrado:", {
             id: patientDoc.id,
-            name: data.name
+            name: data.name,
+            doctorId: data.doctorId
           });
+          
+          // Obtener el nombre del doctor si existe doctorId
+          let doctorName = "No asignado";
+          console.log("🔍 Verificando doctorId del paciente:", data.doctorId);
+          
+          if (data.doctorId) {
+            try {
+              console.log("🔎 Buscando doctor con ID:", data.doctorId);
+              const doctorDoc = await getDoc(doc(db, "users", data.doctorId));
+              
+              if (doctorDoc.exists()) {
+                const doctorData = doctorDoc.data();
+                doctorName = `Dr. ${doctorData.name || "Sin nombre"}`;
+                console.log("✅ Doctor encontrado:", doctorName);
+              } else {
+                console.log("⚠️ Doctor no encontrado en la base de datos");
+              }
+            } catch (err) {
+              console.error("❌ Error al obtener doctor:", err);
+            }
+          } else {
+            console.log("⚠️ Paciente no tiene doctorId asignado");
+          }
           
           const patient: PatientProfile = {
             uid: patientDoc.id,
@@ -74,9 +99,16 @@ export async function getPatientsForCaregiver(caregiverId: string): Promise<Pati
             photoURL: data.photoURL || null,
             alzheimerLevel: data.alzheimerLevel || "No especificado",
             doctorId: data.doctorId,
-            doctorName: data.doctorName || "No asignado",
+            doctorName: doctorName,
             caregiverId: caregiverId,
+            completedTests: data.completedTests || 0,
           };
+
+          console.log("📦 Paciente procesado:", {
+            name: patient.name,
+            doctorName: patient.doctorName,
+            doctorId: patient.doctorId
+          });
 
           patients.push(patient);
         } else {

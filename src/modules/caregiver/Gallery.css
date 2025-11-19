@@ -1,21 +1,26 @@
 .caregiver-gallery-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 30px 20px;
-  font-family: "Poppins", sans-serif;
+  padding: 30px;
+  font-family: "Segoe UI", "Roboto", sans-serif;
+  background: #f5f7fa;
+  min-height: 100vh;
 }
 
-.caregiver-gallery-container h2 {
+.gallery-header {
+  margin-bottom: 30px;
+}
+
+.gallery-title {
   font-size: 28px;
-  color: #3b76c4;
-  margin-bottom: 8px;
-  text-align: center;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
 }
 
 .gallery-subtitle {
-  text-align: center;
   color: #64748b;
-  margin-bottom: 30px;
+  margin: 0;
   font-size: 15px;
 }
 
@@ -23,17 +28,32 @@
   text-align: center;
   font-size: 18px;
   color: #64748b;
-  margin-top: 50px;
+  margin-top: 100px;
 }
 
-.no-memories {
+.no-memories-state {
   text-align: center;
-  color: #94a3b8;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 16px;
+  margin-top: 40px;
+}
+
+.no-memories-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.no-memories-state h3 {
+  font-size: 24px;
+  color: #334155;
+  margin: 0 0 8px 0;
+}
+
+.no-memories-state p {
   font-size: 16px;
-  margin-top: 60px;
-  padding: 40px;
-  background: #f8fafc;
-  border-radius: 12px;
+  color: #64748b;
+  margin: 0;
 }
 
 .memories-grid {
