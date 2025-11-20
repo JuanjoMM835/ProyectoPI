@@ -28,18 +28,35 @@ export function useAuth() {
   };
 
   const register = async (email: string, password: string, name: string, role: Role) => {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    const firebaseUser = res.user;
+    console.log("📝 [REGISTER] Starting registration...");
+    console.log("📝 [REGISTER] Email:", email);
+    console.log("📝 [REGISTER] Name:", name);
+    console.log("📝 [REGISTER] Role:", role);
+    
+    try {
+      console.log("🔐 [REGISTER] Creating user in Firebase Authentication...");
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = res.user;
+      console.log("✅ [REGISTER] User created in Authentication with UID:", firebaseUser.uid);
 
-    await setDoc(doc(db, "users", firebaseUser.uid), {
-      name,
-      email,
-      role,
-      createdAt: new Date(),
-      estado: "activo",
-    });
+      console.log("💾 [REGISTER] Creating user document in Firestore...");
+      await setDoc(doc(db, "users", firebaseUser.uid), {
+        uid: firebaseUser.uid,
+        name,
+        email,
+        role,
+        createdAt: new Date(),
+        estado: "activo",
+        doctorId: null,
+        patientIds: [],
+      });
+      console.log("✅ [REGISTER] User document created in Firestore");
 
-    return firebaseUser;
+      return res; // Retornar UserCredential completo
+    } catch (error) {
+      console.error("❌ [REGISTER] Error during registration:", error);
+      throw error;
+    }
   };
 
   const logout = () => signOut(auth);

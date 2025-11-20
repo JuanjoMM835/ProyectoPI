@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getDoctorPatients, type Patient } from "../../api/patientService";
-import { useAuth } from "../../auth/useAuth";
+import { getDoctorPatients, type Patient } from "../../api/patientService.ts";
+import { useAuth } from "../../auth/useAuth.ts";
+import InviteCaregiverModal from "../../components/InviteCaregiverModal.tsx";
 import "./DoctorPatients.css";
 
 export default function DoctorPatients() {
@@ -9,6 +10,8 @@ export default function DoctorPatients() {
   const navigate = useNavigate();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -18,7 +21,7 @@ export default function DoctorPatients() {
       }
 
       try {
-        const patientsData = await getDoctorPatients(user.patientIds);
+        const patientsData = await getDoctorPatients(user.uid);
         setPatients(patientsData);
       } catch (error) {
         console.error("Error cargando pacientes:", error);
@@ -104,6 +107,15 @@ export default function DoctorPatients() {
                 >
                   🤖 Generar Test
                 </button>
+                <button 
+                  className="invite-caregiver-btn"
+                  onClick={() => {
+                    setSelectedPatient({ id: patient.uid, name: patient.name });
+                    setIsModalOpen(true);
+                  }}
+                >
+                  ✉️ Invitar Cuidador
+                </button>
               </div>
             </div>
           ))}
@@ -113,6 +125,19 @@ export default function DoctorPatients() {
       <div className="patients-summary">
         <p>Total de pacientes: <strong>{patients.length}</strong></p>
       </div>
+
+      {/* Modal de invitación */}
+      {selectedPatient && (
+        <InviteCaregiverModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedPatient(null);
+          }}
+          patientId={selectedPatient.id}
+          patientName={selectedPatient.name}
+        />
+      )}
     </div>
   );
 }

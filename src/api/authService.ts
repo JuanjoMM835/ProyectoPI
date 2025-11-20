@@ -15,8 +15,9 @@ export type Role = "patient" | "doctor" | "caregiver";
 export async function register(
   email: string,
   password: string,
-  role: Role
-): Promise<void> {
+  role: Role,
+  name?: string
+) {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -25,20 +26,22 @@ export async function register(
 
     // Guardado en Firestore
     await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
       email,
       role,
-      name: user.email?.split("@")[0] || "",
+      name: name || user.email?.split("@")[0] || "",
       doctorId: null,
       patientIds: [],
       estado: "activo",
       createdAt: serverTimestamp()
     });
 
-  }catch (error: unknown) {
-  const err = error as Error;
-  console.error(" Error en registerUser:", err.message);
-  throw err;
-}
+    return userCredential;
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Error en registerUser:", err.message);
+    throw err;
+  }
 }
 
 export async function login(

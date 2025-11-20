@@ -36,28 +36,33 @@ export async function getPatientsForCaregiver(caregiverId: string): Promise<Pati
   try {
     console.log("🔍 Buscando pacientes para caregiverId:", caregiverId);
     
-    // Primero, obtener el documento del cuidador para ver sus patientIds
-    const caregiverDoc = await getDoc(doc(db, "users", caregiverId));
+    // Buscar en la colección "family" los vínculos donde este usuario es el cuidador
+    const familyQuery = query(
+      collection(db, "family"),
+      where("caregiverId", "==", caregiverId)
+    );
     
-    if (!caregiverDoc.exists()) {
-      console.log("❌ Cuidador no encontrado");
-      return [];
-    }
+    const familySnapshot = await getDocs(familyQuery);
+    console.log("📋 Vínculos familiares encontrados:", familySnapshot.size);
 
-    const caregiverData = caregiverDoc.data();
-    const patientIds = caregiverData.patientIds || [];
-    
-    console.log("📋 Patient IDs encontrados:", patientIds);
-
-    if (patientIds.length === 0) {
+    if (familySnapshot.empty) {
       console.log("⚠️ No hay pacientes asignados a este cuidador");
       return [];
     }
 
     // Obtener los detalles de cada paciente
     const patients: PatientProfile[] = [];
+    
+    for (const familyDoc of familySnapshot.docs) {
+      const familyData = familyDoc.data();
+      const patientId = familyData.patientId;
+      const doctorId = familyData.doctorId;
+      
+      console.log("👥 Procesando vínculo familiar:", {
+        patientId,
+        doctorId
+      });
 
-    for (const patientId of patientIds) {
       try {
         const patientDoc = await getDoc(doc(db, "users", patientId));
         
@@ -69,14 +74,13 @@ export async function getPatientsForCaregiver(caregiverId: string): Promise<Pati
             doctorId: data.doctorId
           });
           
-          // Obtener el nombre del doctor si existe doctorId
+          // Obtener el nombre del doctor desde el vínculo familiar
           let doctorName = "No asignado";
-          console.log("🔍 Verificando doctorId del paciente:", data.doctorId);
           
-          if (data.doctorId) {
+          if (doctorId) {
             try {
-              console.log("🔎 Buscando doctor con ID:", data.doctorId);
-              const doctorDoc = await getDoc(doc(db, "users", data.doctorId));
+              console.log("🔎 Buscando doctor con ID:", doctorId);
+              const doctorDoc = await getDoc(doc(db, "users", doctorId));
               
               if (doctorDoc.exists()) {
                 const doctorData = doctorDoc.data();
@@ -89,7 +93,7 @@ export async function getPatientsForCaregiver(caregiverId: string): Promise<Pati
               console.error("❌ Error al obtener doctor:", err);
             }
           } else {
-            console.log("⚠️ Paciente no tiene doctorId asignado");
+            console.log("⚠️ Vínculo familiar no tiene doctorId asignado");
           }
           
           const patient: PatientProfile = {
@@ -98,7 +102,7 @@ export async function getPatientsForCaregiver(caregiverId: string): Promise<Pati
             email: data.email || "",
             photoURL: data.photoURL || null,
             alzheimerLevel: data.alzheimerLevel || "No especificado",
-            doctorId: data.doctorId,
+            doctorId: doctorId,
             doctorName: doctorName,
             caregiverId: caregiverId,
             completedTests: data.completedTests || 0,

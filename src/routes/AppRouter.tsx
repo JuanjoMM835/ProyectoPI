@@ -30,6 +30,7 @@ import CreateTestForm from "../modules/doctor/CreateTestForm";
 import DoctorPatientTests from "../modules/doctor/PatientTests";
 import DoctorTestDetails from "../modules/doctor/TestDetails";
 import DoctorReports from "../modules/doctor/Reports";
+import InviteCaregiver from "../modules/doctor/InviteCaregiver";
 
 function RoleBasedRedirect() {
   const { role } = useAuth();
@@ -78,6 +79,7 @@ export default function AppRouter() {
           <Route path="patient-tests/:patientId" element={<DoctorPatientTests />} />
           <Route path="test-details/:testId" element={<DoctorTestDetails />} />
           <Route path="reports" element={<DoctorReports />} />
+          <Route path="invite-caregiver" element={<InviteCaregiver />} />
           <Route path="profile" element={<DoctorProfile />} />
         </Route>
 

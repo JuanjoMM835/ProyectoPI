@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase/firebase";
 import { useAuth } from "../../auth/useAuth";
 import { getDoctorPatients } from "../../api/patientService";
 import { getAllTestsByPatient } from "../../api/testService";
@@ -40,13 +38,9 @@ export default function DoctorReports() {
     try {
       setLoading(true);
       
-      // Obtener el documento del doctor para conseguir sus patientIds
-      const doctorDoc = await getDoc(doc(db, "users", user.uid));
-      const patientIds = doctorDoc.exists() ? (doctorDoc.data().patientIds || []) : [];
+      console.log("Doctor UID:", user.uid);
       
-      console.log("Doctor patientIds:", patientIds);
-      
-      const doctorPatients = await getDoctorPatients(patientIds);
+      const doctorPatients = await getDoctorPatients(user.uid);
       console.log("Doctor patients:", doctorPatients);
 
       // Cargar tests completados de cada paciente

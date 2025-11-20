@@ -1,32 +1,93 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type { Role } from "../../api/authService";
 import { useAuth } from "../../auth/useAuth";
+import { validateInvitationToken, acceptInvitation, type Invitation } from "../../api/invitationService";
 import logoImage from "../../assets/brain-logo.png";
 import "./Register.css";
 
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<Role>("patient");
   const [error, setError] = useState("");
+  const [invitation, setInvitation] = useState<Invitation | null>(null);
+  const [loadingInvitation, setLoadingInvitation] = useState(false);
+
+  // Validar token de invitación al cargar
+  useEffect(() => {
+    const token = searchParams.get("token");
+    if (token) {
+      validateInvitation(token);
+    }
+  }, [searchParams]);
+
+  const validateInvitation = async (token: string) => {
+    setLoadingInvitation(true);
+    console.log("🔍 [VALIDATE] Starting validation with token:", token);
+    console.log("🔍 [VALIDATE] NO USER SHOULD BE CREATED YET");
+    try {
+      const validInvitation = await validateInvitationToken(token);
+      console.log("✅ [VALIDATE] Validation result:", validInvitation);
+      if (validInvitation) {
+        setInvitation(validInvitation);
+        setEmail(validInvitation.invitedEmail);
+        setRole("caregiver");
+        console.log("✅ [VALIDATE] Invitation valid, email set to:", validInvitation.invitedEmail);
+        console.log("✅ [VALIDATE] Role set to: caregiver");
+        console.log("✅ [VALIDATE] User will be created ONLY when clicking REGISTRARME button");
+      } else {
+        console.log("❌ [VALIDATE] Invitation is invalid or expired");
+        setError("La invitación es inválida o ha expirado");
+      }
+    } catch (err) {
+      console.error("❌ [VALIDATE] Error validating invitation:", err);
+      setError("Error al validar la invitación");
+    } finally {
+      setLoadingInvitation(false);
+      console.log("🏁 [VALIDATE] Validation process completed");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     try {
-      await register(email, password, name, role);
+      console.log("Starting registration...");
+      const userCredential = await register(email, password, name, role);
+      console.log("User registered:", userCredential.user.uid);
+
+      // Si hay invitación, aceptarla
+      if (invitation && invitation.id && userCredential.user) {
+        console.log("Accepting invitation:", invitation.id, "for caregiver:", userCredential.user.uid);
+        await acceptInvitation(invitation.id, userCredential.user.uid);
+        console.log("Invitation accepted successfully");
+      } else {
+        console.log("No invitation to accept");
+      }
+
       navigate("/login");
-    } catch (err: unknown) {
-      const msg =
-        err instanceof Error
-          ? err.message
-          : "Error al registrarse. Intenta nuevamente.";
+    } catch (err: any) {
+      console.error("Error en registro:", err);
+      
+      let msg = "Error al registrarse. Intenta nuevamente.";
+      
+      // Manejar errores específicos de Firebase
+      if (err?.code === "auth/email-already-in-use") {
+        msg = `El correo ${email} ya está registrado en Firebase Authentication (pero sin datos en Firestore). Ve a Firebase Console → Authentication → Users y elimina este correo, luego intenta de nuevo.`;
+      } else if (err?.code === "auth/weak-password") {
+        msg = "La contraseña debe tener al menos 6 caracteres.";
+      } else if (err?.code === "auth/invalid-email") {
+        msg = "El correo electrónico no es válido.";
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
 
       setError(msg);
     }
@@ -95,9 +156,22 @@ export default function Register() {
         <div className="register-form-section">
           <div className="form-container">
             <div className="form-header">
-              <h2 className="form-title">Crear Cuenta Nueva</h2>
-              <p className="form-subtitle">Completa los datos para registrarte</p>
+              <h2 className="form-title">
+                {invitation ? "Completar Registro - Cuidador" : "Crear Cuenta Nueva"}
+              </h2>
+              <p className="form-subtitle">
+                {invitation 
+                  ? `Dr. ${invitation.doctorName} te ha invitado a cuidar a ${invitation.patientName}`
+                  : "Completa los datos para registrarte"
+                }
+              </p>
             </div>
+
+            {loadingInvitation && (
+              <div className="invitation-loading">
+                <p>Validando invitación...</p>
+              </div>
+            )}
 
             {error && (
               <div className="register-error">
@@ -128,6 +202,7 @@ export default function Register() {
                 <input
                   type="email"
                   placeholder="ejemplo@correo.com"
+                  disabled={!!invitation}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -147,20 +222,22 @@ export default function Register() {
                 />
               </div>
 
-              <div className="register-form-group">
-                <label className="register-label">Selecciona tu Rol</label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as Role)}
-                  className="register-select"
-                >
-                  <option value="patient">Paciente</option>
-                  <option value="doctor">Doctor</option>
-                  <option value="caregiver">Cuidador</option>
-                </select>
-              </div>
+              {!invitation && (
+                <div className="register-form-group">
+                  <label className="register-label">Selecciona tu Rol</label>
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value as Role)}
+                    className="register-select"
+                  >
+                    <option value="patient">Paciente</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="caregiver">Cuidador</option>
+                  </select>
+                </div>
+              )}
 
-              <button type="submit" className="register-btn">
+              <button type="submit" className="register-btn" disabled={loadingInvitation}>
                 <span>REGISTRARME</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />

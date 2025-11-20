@@ -37,24 +37,40 @@ export const getPatientById = async (patientId: string): Promise<Patient | null>
 };
 
 /**
- * ✅ Obtener todos los pacientes asignados a un doctor
+ * ✅ Obtener todos los pacientes asignados a un doctor (usando colección family)
  */
-export const getDoctorPatients = async (patientIds: string[]): Promise<Patient[]> => {
-  if (!patientIds || patientIds.length === 0) {
-    return [];
-  }
-
+export const getDoctorPatients = async (doctorId: string): Promise<Patient[]> => {
   try {
-    const patients: Patient[] = [];
+    console.log("🔍 Buscando pacientes para doctorId:", doctorId);
+    
+    // Buscar en la colección "family" los vínculos donde este usuario es el doctor
+    const familyQuery = query(
+      collection(db, "family"),
+      where("doctorId", "==", doctorId)
+    );
+    
+    const familySnapshot = await getDocs(familyQuery);
+    console.log("📋 Vínculos familiares encontrados:", familySnapshot.size);
 
+    if (familySnapshot.empty) {
+      console.log("⚠️ No hay pacientes asignados a este doctor");
+      return [];
+    }
+
+    const patients: Patient[] = [];
+    
     // Obtener datos de cada paciente
-    for (const patientId of patientIds) {
+    for (const familyDoc of familySnapshot.docs) {
+      const familyData = familyDoc.data();
+      const patientId = familyData.patientId;
+      
       const patient = await getPatientById(patientId);
       if (patient) {
         patients.push(patient);
       }
     }
 
+    console.log("✅ Total pacientes cargados:", patients.length);
     return patients;
   } catch (error) {
     console.error("Error obteniendo pacientes del doctor:", error);
