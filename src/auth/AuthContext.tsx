@@ -49,25 +49,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const snap = await getDoc(userRef);
 
         if (!snap.exists()) {
-          await setDoc(userRef, {
-            role: "patient",
-            name: firebaseUser.displayName || "Sin nombre",
-            photoURL: firebaseUser.photoURL || null,
-            email: firebaseUser.email,
-            createdAt: new Date(),
-          });
-
-          setUser({
-            uid: firebaseUser.uid,
-            name: firebaseUser.displayName || "Sin nombre",
-            email: firebaseUser.email!,
-            role: "patient",
-            photoURL: firebaseUser.photoURL || null,
-          });
-
-          setRole("patient");
-          setName(firebaseUser.displayName || "Sin nombre");
-          setPhotoURL(firebaseUser.photoURL || null);
+          // ❌ NO crear automáticamente el documento
+          // Si hay un usuario en Auth pero no en Firestore, eliminarlo completamente
+          console.warn("⚠️ User authenticated but no Firestore document found. Deleting user from Authentication...");
+          try {
+            // Eliminar el usuario de Firebase Authentication
+            await firebaseUser.delete();
+            console.log("✅ User deleted from Authentication");
+          } catch (deleteError) {
+            console.error("❌ Error deleting user from Authentication:", deleteError);
+            // Si falla la eliminación, al menos cerrar sesión
+            await auth.signOut();
+          }
+          setUser(null);
+          setRole(null);
+          setName(null);
+          setPhotoURL(null);
+          setLoading(false);
+          return;
         } else {
           const data = snap.data();
           const customUser: CustomUser = {

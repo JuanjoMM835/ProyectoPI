@@ -1,51 +1,41 @@
-import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
+import logoImage from "../assets/brain-logo.png";
 import "./MainLayout.css";
 
 export default function MainLayout() {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    navigate("/home");
   };
 
-  const isActive = (path: string) => location.pathname === path;
-
-  const getGreeting = () => {
-    const hour = currentTime.getHours();
-    if (hour < 12) return "Buenos días";
-    if (hour < 19) return "Buenas tardes";
-    return "Buenas noches";
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
   const patientMenuItems = [
-    { path: "/patient/home", icon: "🏠", label: "Inicio", color: "#6B9BD1" },
-    { path: "/patient/reminders", icon: "⏰", label: "Recordatorios", color: "#F4A261" },
-    { path: "/patient/profile", icon: "👤", label: "Perfil", color: "#52B788" },
-    { path: "/patient/test", icon: "🧠", label: "Test", color: "#E76F51" },
+    { path: "/patient/home", icon: "📊", label: "Dashboard" },
+    { path: "/patient/tests", icon: "📋", label: "Tests" },
+    { path: "/patient/reminders", icon: "⏰", label: "Recordatorios" },
+    { path: "/patient/profile", icon: "👤", label: "Perfil" },
   ];
 
   const caregiverMenuItems = [
-    { path: "/caregiver/home", icon: "📌", label: "Inicio", color: "#6B9BD1" },
-    { path: "/caregiver/patients", icon: "👥", label: "Pacientes", color: "#52B788" },
-    { path: "/caregiver/reminders", icon: "🔔", label: "Recordatorios", color: "#F4A261" },
-    { path: "/caregiver/reports", icon: "📈", label: "Reportes", color: "#E76F51" },
+    { path: "/caregiver/home", icon: "📊", label: "Dashboard" },
+    { path: "/caregiver/family", icon: "👥", label: "Familia" },
+    { path: "/caregiver/gallery", icon: "🖼️", label: "Galería" },
+    { path: "/caregiver/upload-memory", icon: "📸", label: "Subir Recuerdo" },
+    { path: "/caregiver/profile", icon: "👤", label: "Perfil" },
   ];
 
   const doctorMenuItems = [
-    { path: "/doctor/reports", icon: "📊", label: "Reportes", color: "#6B9BD1" },
-    { path: "/doctor/patients", icon: "🏥", label: "Pacientes", color: "#52B788" },
-    { path: "/doctor/analysis", icon: "🔬", label: "Análisis", color: "#F4A261" },
+    { path: "/doctor/home", icon: "📊", label: "Dashboard" },
+    { path: "/doctor/patients", icon: "👥", label: "Mis Pacientes" },
+    { path: "/doctor/reports", icon: "📈", label: "Reportes" },
+    { path: "/doctor/invite-caregiver", icon: "✉️", label: "Invitar Cuidador" },
   ];
 
   const getMenuItems = () => {
@@ -61,56 +51,39 @@ export default function MainLayout() {
     switch (user?.role) {
       case "patient": return "Paciente";
       case "caregiver": return "Cuidador";
-      case "doctor": return "Doctor";
+      case "doctor": return "Médico";
       default: return "Usuario";
+    }
+  };
+
+  const getPanelTitle = () => {
+    switch (user?.role) {
+      case "patient": return "Panel Paciente";
+      case "caregiver": return "Panel Cuidador";
+      case "doctor": return "Panel Médico";
+      default: return "Panel";
+    }
+  };
+
+  const getSystemSubtitle = () => {
+    switch (user?.role) {
+      case "patient": return "Sistema de Gestión";
+      case "caregiver": return "Sistema de Cuidado";
+      case "doctor": return "Sistema Médico";
+      default: return "Sistema";
     }
   };
 
   return (
     <div className="layout-container">
-      {/* Topbar con información del usuario */}
-      <header className="topbar">
-        <div className="topbar-left">
-          <h1 className="app-title">
-            <span className="app-icon">🧠</span>
-            <span className="app-name">DoRemember</span>
-          </h1>
-        </div>
-        
-        <div className="topbar-center">
-          <div className="current-time">
-            <span className="time-icon">🕐</span>
-            <span className="time-text">
-              {currentTime.toLocaleTimeString('es-ES', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
-            </span>
-          </div>
-        </div>
-
-        <div className="topbar-right">
-          <div className="user-info">
-            <span className="greeting">{getGreeting()},</span>
-            <span className="user-name">{user?.name || "Usuario"}</span>
-            <span className="user-badge">{getRoleLabel()}</span>
-          </div>
-          <div className="user-avatar">
-            {user?.role === "patient" && "👤"}
-            {user?.role === "caregiver" && "👨‍⚕️"}
-            {user?.role === "doctor" && "👨‍⚕️"}
-          </div>
-        </div>
-      </header>
-
-      {/* Sidebar mejorado */}
+      {/* Sidebar izquierdo */}
       <aside className="sidebar">
         <div className="sidebar-header">
-          <div className="logo-container">
-            <span className="logo-icon">💙</span>
-            <h2 className="logo-text">DoRemember</h2>
+          <img src={logoImage} alt="DoRemember" className="sidebar-logo" />
+          <div className="sidebar-brand">
+            <h2 className="brand-title">DoRemember</h2>
+            <p className="brand-subtitle">{getSystemSubtitle()}</p>
           </div>
-          <p className="logo-subtitle">Cuidado con amor</p>
         </div>
         
         <nav className="sidebar-nav">
@@ -120,59 +93,51 @@ export default function MainLayout() {
                 key={item.path}
                 className={`menu-item ${isActive(item.path) ? "active" : ""}`}
                 onClick={() => navigate(item.path)}
-                style={{ "--item-color": item.color } as React.CSSProperties}
               >
                 <span className="menu-icon">{item.icon}</span>
                 <span className="menu-label">{item.label}</span>
-                {isActive(item.path) && <span className="active-indicator"></span>}
               </li>
             ))}
           </ul>
         </nav>
 
         <div className="sidebar-footer">
-          <div className="quick-stats">
-            <div className="stat-item">
-              <span className="stat-icon">📅</span>
-              <div className="stat-info">
-                <span className="stat-label">Hoy</span>
-                <span className="stat-value">
-                  {currentTime.toLocaleDateString('es-ES', { 
-                    day: 'numeric', 
-                    month: 'short' 
-                  })}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <button className="logout-btn" onClick={handleLogout}>
-            <span className="logout-icon">🚪</span>
-            <span className="logout-text">Cerrar sesión</span>
-          </button>
+          <ul className="menu-list">
+            <li className="menu-item logout-item" onClick={handleLogout}>
+              <span className="menu-icon logout-icon">➜</span>
+              <span className="menu-label">Cerrar Sesión</span>
+            </li>
+          </ul>
         </div>
       </aside>
 
-      {/* Contenido dinámico */}
-      <main className="content">
-        <div className="content-wrapper">
-          <Outlet />
-        </div>
-        
-        {/* Footer decorativo */}
-        <footer className="content-footer">
-          <p className="footer-text">
-            <span className="footer-heart">💙</span>
-            Hecho con amor para personas especiales
-          </p>
-        </footer>
-      </main>
+      {/* Contenido principal */}
+      <div className="main-content">
+        {/* Top navbar */}
+        <header className="top-navbar">
+          <div className="navbar-left">
+            <h1 className="page-title">{getPanelTitle()}</h1>
+          </div>
+          
+          <div className="navbar-right">
+            <div className="user-profile" onClick={() => navigate(`/${user?.role}/profile`)}>
+              <div className="user-avatar">
+                <span className="avatar-text">
+                  {user?.name?.substring(0, 2).toUpperCase() || "U"}
+                </span>
+              </div>
+              <div className="user-details">
+                <div className="user-name">{user?.name || "Usuario"}</div>
+                <div className="user-role">{getRoleLabel()}</div>
+              </div>
+            </div>
+          </div>
+        </header>
 
-      {/* Decoración de fondo */}
-      <div className="background-decoration">
-        <div className="decoration-circle circle-1"></div>
-        <div className="decoration-circle circle-2"></div>
-        <div className="decoration-circle circle-3"></div>
+        {/* Área de contenido */}
+        <main className="content-area">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

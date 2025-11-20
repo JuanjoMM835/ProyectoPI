@@ -102,11 +102,17 @@ export default function CaregiverGallery() {
 
   return (
     <div className="caregiver-gallery-container">
-      <h2>Galería de Fotos del Paciente</h2>
-      <p className="gallery-subtitle">Gestiona las fotos para el test del paciente</p>
+      <div className="gallery-header">
+        <h1 className="gallery-title">Galería de Fotos del Paciente</h1>
+        <p className="gallery-subtitle">Gestiona las fotos para el test del paciente</p>
+      </div>
 
       {memories.length === 0 ? (
-        <p className="no-memories">No hay fotos subidas aún.</p>
+        <div className="no-memories-state">
+          <div className="no-memories-icon">🖼️</div>
+          <h3>No hay fotos subidas aún</h3>
+          <p>Las fotos que subas aparecerán aquí</p>
+        </div>
       ) : (
         <div className="memories-grid">
           {memories.map((memory) => (

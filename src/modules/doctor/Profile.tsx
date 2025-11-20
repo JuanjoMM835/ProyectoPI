@@ -4,24 +4,26 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import "./Profile.css";
 
-interface CaregiverProfile {
+interface DoctorProfile {
   name: string;
   lastName: string;
   email: string;
   phone: string;
   address: string;
-  relationship: string;
+  specialty: string;
+  licenseNumber: string;
 }
 
-export default function CaregiverProfile() {
+export default function DoctorProfile() {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<CaregiverProfile>({
+  const [profile, setProfile] = useState<DoctorProfile>({
     name: "",
     lastName: "",
     email: "",
     phone: "",
     address: "",
-    relationship: "",
+    specialty: "",
+    licenseNumber: "",
   });
   const [isEditing, setIsEditing] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,8 @@ export default function CaregiverProfile() {
           email: data.email || user.email || "",
           phone: data.phone || "",
           address: data.address || "",
-          relationship: data.relationship || "",
+          specialty: data.specialty || "",
+          licenseNumber: data.licenseNumber || "",
         });
       }
     } catch (error) {
@@ -65,7 +68,8 @@ export default function CaregiverProfile() {
         lastName: profile.lastName,
         phone: profile.phone,
         address: profile.address,
-        relationship: profile.relationship,
+        specialty: profile.specialty,
+        licenseNumber: profile.licenseNumber,
       });
       setIsEditing(false);
       alert("Perfil actualizado correctamente");
@@ -75,12 +79,12 @@ export default function CaregiverProfile() {
     }
   };
 
-  const handleChange = (field: keyof CaregiverProfile, value: string) => {
+  const handleChange = (field: keyof DoctorProfile, value: string) => {
     setProfile({ ...profile, [field]: value });
   };
 
   const getInitials = () => {
-    return `${profile.name.charAt(0)}${profile.lastName.charAt(0)}`.toUpperCase() || "CG";
+    return `${profile.name.charAt(0)}${profile.lastName.charAt(0)}`.toUpperCase() || "DG";
   };
 
   if (loading) {
@@ -91,7 +95,7 @@ export default function CaregiverProfile() {
     <div className="profile-container">
       <div className="profile-header">
         <h1 className="profile-title">Mi Perfil</h1>
-        <p className="profile-subtitle">Administra tu información personal y de contacto</p>
+        <p className="profile-subtitle">Administra tu información personal y profesional</p>
       </div>
 
       <div className="profile-content">
@@ -106,10 +110,10 @@ export default function CaregiverProfile() {
               </button>
             </div>
             <div className="photo-info">
-              <h4 className="caregiver-name">
-                {profile.name} {profile.lastName}
+              <h4 className="doctor-name">
+                Dr. {profile.name} {profile.lastName}
               </h4>
-              <p className="caregiver-role">Cuidador - {profile.relationship || "Familiar"}</p>
+              <p className="doctor-specialty">Especialista en {profile.specialty || "Medicina General"}</p>
             </div>
           </div>
           <button className="btn-secondary">Cambiar Foto</button>
@@ -186,14 +190,27 @@ export default function CaregiverProfile() {
               </div>
             </div>
 
-            <div className="form-group full-width">
-              <label className="form-label">Relación con el Paciente</label>
+            <div className="form-group">
+              <label className="form-label">Especialidad</label>
+              <div className="input-with-icon">
+                <span className="input-icon">🏥</span>
+                <input
+                  type="text"
+                  className="form-input with-icon"
+                  value={profile.specialty}
+                  onChange={(e) => handleChange("specialty", e.target.value)}
+                  disabled={!isEditing}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Número de Colegiado</label>
               <input
                 type="text"
                 className="form-input"
-                placeholder="Ej: Hijo/a, Esposo/a, Familiar"
-                value={profile.relationship}
-                onChange={(e) => handleChange("relationship", e.target.value)}
+                value={profile.licenseNumber}
+                onChange={(e) => handleChange("licenseNumber", e.target.value)}
                 disabled={!isEditing}
               />
             </div>

@@ -17,6 +17,7 @@ export interface PatientProfile {
   doctorId?: string;
   doctorName?: string;
   caregiverId?: string;
+  completedTests?: number;
 }
 
 export interface Activity {
@@ -35,37 +36,65 @@ export async function getPatientsForCaregiver(caregiverId: string): Promise<Pati
   try {
     console.log("🔍 Buscando pacientes para caregiverId:", caregiverId);
     
-    // Primero, obtener el documento del cuidador para ver sus patientIds
-    const caregiverDoc = await getDoc(doc(db, "users", caregiverId));
+    // Buscar en la colección "family" los vínculos donde este usuario es el cuidador
+    const familyQuery = query(
+      collection(db, "family"),
+      where("caregiverId", "==", caregiverId)
+    );
     
-    if (!caregiverDoc.exists()) {
-      console.log("❌ Cuidador no encontrado");
-      return [];
-    }
+    const familySnapshot = await getDocs(familyQuery);
+    console.log("📋 Vínculos familiares encontrados:", familySnapshot.size);
 
-    const caregiverData = caregiverDoc.data();
-    const patientIds = caregiverData.patientIds || [];
-    
-    console.log("📋 Patient IDs encontrados:", patientIds);
-
-    if (patientIds.length === 0) {
+    if (familySnapshot.empty) {
       console.log("⚠️ No hay pacientes asignados a este cuidador");
       return [];
     }
 
     // Obtener los detalles de cada paciente
     const patients: PatientProfile[] = [];
+    
+    for (const familyDoc of familySnapshot.docs) {
+      const familyData = familyDoc.data();
+      const patientId = familyData.patientId;
+      const doctorId = familyData.doctorId;
+      
+      console.log("👥 Procesando vínculo familiar:", {
+        patientId,
+        doctorId
+      });
 
-    for (const patientId of patientIds) {
       try {
         const patientDoc = await getDoc(doc(db, "users", patientId));
         
         if (patientDoc.exists()) {
           const data = patientDoc.data();
-          console.log("� Paciente encontrado:", {
+          console.log("👤 Paciente encontrado:", {
             id: patientDoc.id,
-            name: data.name
+            name: data.name,
+            doctorId: data.doctorId
           });
+          
+          // Obtener el nombre del doctor desde el vínculo familiar
+          let doctorName = "No asignado";
+          
+          if (doctorId) {
+            try {
+              console.log("🔎 Buscando doctor con ID:", doctorId);
+              const doctorDoc = await getDoc(doc(db, "users", doctorId));
+              
+              if (doctorDoc.exists()) {
+                const doctorData = doctorDoc.data();
+                doctorName = `Dr. ${doctorData.name || "Sin nombre"}`;
+                console.log("✅ Doctor encontrado:", doctorName);
+              } else {
+                console.log("⚠️ Doctor no encontrado en la base de datos");
+              }
+            } catch (err) {
+              console.error("❌ Error al obtener doctor:", err);
+            }
+          } else {
+            console.log("⚠️ Vínculo familiar no tiene doctorId asignado");
+          }
           
           const patient: PatientProfile = {
             uid: patientDoc.id,
@@ -73,10 +102,17 @@ export async function getPatientsForCaregiver(caregiverId: string): Promise<Pati
             email: data.email || "",
             photoURL: data.photoURL || null,
             alzheimerLevel: data.alzheimerLevel || "No especificado",
-            doctorId: data.doctorId,
-            doctorName: data.doctorName || "No asignado",
+            doctorId: doctorId,
+            doctorName: doctorName,
             caregiverId: caregiverId,
+            completedTests: data.completedTests || 0,
           };
+
+          console.log("📦 Paciente procesado:", {
+            name: patient.name,
+            doctorName: patient.doctorName,
+            doctorId: patient.doctorId
+          });
 
           patients.push(patient);
         } else {

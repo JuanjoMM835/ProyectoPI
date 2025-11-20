@@ -59,37 +59,50 @@ export default function CaregiverFamily() {
           <p>Actualmente no tienes pacientes bajo tu cuidado.</p>
         </div>
       ) : (
-        <div className="patients-grid">
+        <div className="patients-list">
           {patients.map((patient) => (
-            <div
-              key={patient.uid}
-              className="patient-card"
-              onClick={() => handlePatientClick(patient)}
-            >
-              <div className="patient-card-header">
+            <div key={patient.uid} className="patient-card-horizontal">
+              <div className="patient-avatar-container">
                 <img
                   src={patient.photoURL || "https://via.placeholder.com/80"}
                   alt={patient.name}
-                  className="patient-avatar"
+                  className="patient-avatar-large"
                 />
-                <div className="patient-info">
+              </div>
+              
+              <div className="patient-details">
+                <div className="patient-header-info">
                   <h3 className="patient-name">{patient.name}</h3>
                   <p className="patient-email">{patient.email}</p>
                 </div>
-              </div>
-              
-              <div className="patient-quick-info">
-                <div className="info-item">
-                  <span className="info-label">Nivel:</span>
-                  <span className="info-value">{patient.alzheimerLevel}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Doctor:</span>
-                  <span className="info-value">{patient.doctorName}</span>
+                
+                <div className="patient-stats">
+                  <div className="stat-badge">
+                    <span className="stat-count">{patient.completedTests || 3}</span>
+                    <span className="stat-text">Tests Completados</span>
+                  </div>
+                  <div className="stat-badge status-badge">
+                    <span className="status-icon">✅</span>
+                    <span className="stat-text">Listo</span>
+                  </div>
                 </div>
               </div>
 
-              <button className="view-details-btn">
+              <div className="patient-meta">
+                <div className="meta-item">
+                  <span className="meta-label">Nivel:</span>
+                  <span className="meta-badge level-badge">{patient.alzheimerLevel || "No especificado"}</span>
+                </div>
+                <div className="meta-item">
+                  <span className="meta-label">Doctor:</span>
+                  <span className="meta-badge doctor-badge">{patient.doctorName || "No asignado"}</span>
+                </div>
+              </div>
+
+              <button 
+                className="view-profile-btn"
+                onClick={() => handlePatientClick(patient)}
+              >
                 Ver perfil completo →
               </button>
             </div>
